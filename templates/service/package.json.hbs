@@ -11,16 +11,16 @@
   "dependencies": {
     "@{{project}}/contracts": "workspace:*",
     "@{{project}}/sdk": "workspace:*",
-    "@pands/config": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/config{{else}}^0.1.0{{/if}}",
-    "@pands/db": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/db{{else}}^0.1.0{{/if}}",
-    "@pands/logger": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/logger{{else}}^0.1.0{{/if}}",
-    "@pands/service": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/service{{else}}^0.1.0{{/if}}",
-    "@pands/telemetry": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/telemetry{{else}}^0.1.0{{/if}}",
+    "@pands/config": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/config{{else}}^{{pandVersion}}{{/if}}",
+    "@pands/db": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/db{{else}}^{{pandVersion}}{{/if}}",
+    "@pands/logger": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/logger{{else}}^{{pandVersion}}{{/if}}",
+    "@pands/service": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/service{{else}}^{{pandVersion}}{{/if}}",
+    "@pands/telemetry": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/telemetry{{else}}^{{pandVersion}}{{/if}}",
     "drizzle-orm": "^0.39.3",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@pands/testing": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/testing{{else}}^0.1.0{{/if}}",
+    "@pands/testing": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/testing{{else}}^{{pandVersion}}{{/if}}",
     "drizzle-kit": "^0.30.4",
     "tsx": "^4.19.3"
   }

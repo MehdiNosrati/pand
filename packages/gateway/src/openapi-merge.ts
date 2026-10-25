@@ -80,7 +80,7 @@ export function mergeServiceOpenApiSpecs(
     openapi: "3.1.0",
     info: {
       title: info.title ?? "Pand API",
-      version: info.version ?? "0.1.0",
+      version: info.version ?? "0.1.1",
     },
     paths: mergedPaths,
     components: {

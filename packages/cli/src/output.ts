@@ -32,6 +32,24 @@ export function resolveCwd(args: GlobalCliArgs): string {
   return args.cwd ? path.resolve(args.cwd) : process.cwd();
 }
 
+export function getCliVersion(): string {
+  try {
+    if (typeof import.meta?.url === "string") {
+      const currentFile = fileURLToPath(import.meta.url);
+      const pkgJsonPath = path.resolve(path.dirname(currentFile), "../package.json");
+      if (fs.existsSync(pkgJsonPath)) {
+        const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, "utf8"));
+        if (typeof pkg.version === "string" && pkg.version) {
+          return pkg.version;
+        }
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return "0.1.1";
+}
+
 export function getPlatformRootDir(): string {
   if (process.env.PAND_PLATFORM_ROOT) {
     return path.resolve(process.env.PAND_PLATFORM_ROOT);

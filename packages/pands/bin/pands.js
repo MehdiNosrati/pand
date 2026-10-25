@@ -1,2 +1,4 @@
 #!/usr/bin/env node
-import "@pands/cli/bin/pand.js";
+import { runCli } from "@pands/cli";
+
+await runCli();

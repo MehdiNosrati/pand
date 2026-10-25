@@ -1,4 +1,25 @@
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { z } from "zod";
+
+export function getDefaultPandVersion(): string {
+  try {
+    if (typeof import.meta?.url === "string") {
+      const currentFile = fileURLToPath(import.meta.url);
+      const pkgJsonPath = path.resolve(path.dirname(currentFile), "../package.json");
+      if (fs.existsSync(pkgJsonPath)) {
+        const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, "utf8"));
+        if (typeof pkg.version === "string" && pkg.version) {
+          return pkg.version;
+        }
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return "0.1.1";
+}
 
 export const ServiceNameRegex = /^[a-z][a-z0-9]{1,23}$/;
 export const ProjectNameRegex = /^[a-z][a-z0-9-]{1,30}$/;
@@ -23,7 +44,7 @@ export const PandConfigSchema = z.object({
   /** Display title, e.g. "Todo App" */
   displayName: z.string().min(1),
   /** Version of @pands/* packages this project targets */
-  pandVersion: z.string().default("0.1.0"),
+  pandVersion: z.string().default(() => getDefaultPandVersion()),
   /** Deterministic base port in [4000, 8900] in steps of 100. Computed from hash(name) if omitted. */
   basePort: z.number().int().min(3000).max(9000).optional(),
   /** Root domain for deployments */

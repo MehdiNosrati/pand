@@ -10,6 +10,7 @@ import {
   dbGenerateInternal,
   dbMigrateInternal,
   deployInternal,
+  getCliVersion,
   queryLogsInternal,
   queryMetricsInternal,
   queryTracesInternal,
@@ -214,7 +215,7 @@ export function createPandMcpHandlers(defaultCwd: string = process.cwd()): PandM
 export function createPandMcpServer(defaultCwd: string = process.cwd()) {
   const server = new McpServer({
     name: "pand-mcp",
-    version: "0.1.0",
+    version: getCliVersion(),
   });
   const handlers = createPandMcpHandlers(defaultCwd);
 

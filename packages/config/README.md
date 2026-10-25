@@ -29,7 +29,7 @@ import { defineConfig } from "@pands/config";
 export default defineConfig({
   name: "acme-corp",
   displayName: "Acme Corporation",
-  version: "0.1.0",
+  pandVersion: "0.1.1",
   apps: {
     web: true,
     admin: true,

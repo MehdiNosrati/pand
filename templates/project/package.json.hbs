@@ -15,7 +15,7 @@
     "format": "biome format --write ."
   },
   "dependencies": {
-    "@pands/config": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/config{{else}}^0.1.0{{/if}}",
+    "@pands/config": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/config{{else}}^{{pandVersion}}{{/if}}",
     "zod": "^3.24.2"
   },
   "devDependencies": {

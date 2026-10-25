@@ -19,6 +19,7 @@ import {
   GLOBAL_ARGS_DEF,
   emitError,
   emitResult,
+  getCliVersion,
   getPlatformRootDir,
   resolveCwd,
 } from "../output.js";
@@ -44,6 +45,7 @@ export async function scaffoldClientApp(options: ScaffoldAppOptions): Promise<st
   const targetDir = path.join(rootDir, "apps", appName);
 
   const isLocalMonorepo = fs.existsSync(path.join(platformRoot, "packages", "config"));
+  const pandVersion = getCliVersion();
 
   renderTemplateDir(templateDir, targetDir, {
     project: config.name,
@@ -57,6 +59,7 @@ export async function scaffoldClientApp(options: ScaffoldAppOptions): Promise<st
     adminPort: ports.adminPort,
     platformRoot,
     isLocalMonorepo,
+    pandVersion,
   });
 
   return targetDir;
@@ -94,6 +97,7 @@ export async function newProjectInternal(options: NewProjectOptions) {
   const androidEnabled = Boolean(options.android);
 
   const isLocalMonorepo = fs.existsSync(path.join(platformRoot, "packages", "config"));
+  const pandVersion = getCliVersion();
 
   renderTemplateDir(projectTemplateDir, projectDir, {
     project: name,
@@ -115,6 +119,7 @@ export async function newProjectInternal(options: NewProjectOptions) {
     androidEnabled,
     platformRoot,
     isLocalMonorepo,
+    pandVersion,
   });
 
   await addServiceInternal({

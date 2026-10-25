@@ -538,7 +538,7 @@
     <a href="#overview" class="brand">
       <span class="brand-logo">P</span>
       <span>Pand Platform</span>
-      <span class="version-pill">v0.1.0</span>
+      <span class="version-pill">v0.1.1</span>
     </a>
     <div class="topbar-actions">
       <input
@@ -1046,7 +1046,7 @@ interface PandIdentityPayload {
 
 export default defineConfig({
   name: "acme-cloud",
-  version: "0.1.0",
+  pandVersion: "0.1.1",
   services: {
     core: { path: "services/core" },
     billing: { path: "services/billing" },
@@ -1100,7 +1100,7 @@ export const invoiceEntity = defineEntity({
 
 export const service = createService({
   name: "billing",
-  version: "0.1.0",
+  version: "0.1.1",
   db,
   entities: [invoiceEntity],
 });
@@ -1307,7 +1307,7 @@ const push = createPushClient({ driver: "expo", accessToken: process.env.EXPO_AC
 await push.send({
   to: "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]",
   title: "Deployment Complete",
-  body: "acme-cloud v0.1.0 is live.",
+  body: "acme-cloud v0.1.1 is live.",
 });
 
 const analytics = createAnalyticsClient({ endpoint: "/api/v1/analytics/events", batchSize: 10 });
@@ -1561,6 +1561,25 @@ const res = await client.request("/invoices", {
           section.style.display = matches ? "" : "none";
         });
       });
+
+      // Dynamically reflect latest version from npm
+      (async function fetchLatestVersion() {
+        try {
+          const res = await fetch("https://registry.npmjs.org/pands/latest", {
+            headers: { Accept: "application/json" },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.version) {
+              document.querySelectorAll(".version-pill").forEach((pill) => {
+                pill.textContent = `v${data.version}`;
+              });
+            }
+          }
+        } catch {
+          // Keep static fallback
+        }
+      })();
     })();
   </script>
 </body>

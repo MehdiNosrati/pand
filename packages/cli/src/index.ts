@@ -16,6 +16,7 @@ import { secretCommand } from "./commands/secret.js";
 import { tracesCommand } from "./commands/traces.js";
 import { upgradeCommand } from "./commands/upgrade.js";
 import { usageCommand } from "./commands/usage.js";
+import { getCliVersion } from "./output.js";
 
 export const addCommand = defineCommand({
   meta: {
@@ -32,7 +33,7 @@ export const addCommand = defineCommand({
 export const mainCommand = defineCommand({
   meta: {
     name: "pand",
-    version: "0.1.0",
+    version: getCliVersion(),
     description: "Pand — Agent-Native Full-Stack Application Platform CLI",
   },
   subCommands: {
@@ -141,6 +142,7 @@ export {
 export {
   emitError,
   emitResult,
+  getCliVersion,
   getPlatformRootDir,
   GLOBAL_ARGS_DEF,
   resolveCwd,

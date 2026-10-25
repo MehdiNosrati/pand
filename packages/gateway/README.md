@@ -28,7 +28,7 @@ import { createGatewayApp } from "@pands/gateway";
 
 const app = createGatewayApp({
   title: "Acme API Gateway",
-  version: "0.1.0",
+  version: "0.1.1",
   services: {
     core: { target: "http://localhost:3010", prefix: "/api/v1/core" },
     billing: { target: "http://localhost:3011", prefix: "/api/v1/billing" },

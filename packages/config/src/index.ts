@@ -1,5 +1,6 @@
 export {
   EntityNameRegex,
+  getDefaultPandVersion,
   PandConfigSchema,
   ProjectNameRegex,
   ServiceConfigSchema,

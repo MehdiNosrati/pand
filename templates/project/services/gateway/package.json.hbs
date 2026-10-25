@@ -9,10 +9,10 @@
     "test": "node -e \"console.log('gateway ok')\""
   },
   "dependencies": {
-    "@pands/auth": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/auth{{else}}^0.1.0{{/if}}",
-    "@pands/config": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/config{{else}}^0.1.0{{/if}}",
-    "@pands/db": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/db{{else}}^0.1.0{{/if}}",
-    "@pands/gateway": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/gateway{{else}}^0.1.0{{/if}}",
-    "@pands/service": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/service{{else}}^0.1.0{{/if}}"
+    "@pands/auth": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/auth{{else}}^{{pandVersion}}{{/if}}",
+    "@pands/config": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/config{{else}}^{{pandVersion}}{{/if}}",
+    "@pands/db": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/db{{else}}^{{pandVersion}}{{/if}}",
+    "@pands/gateway": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/gateway{{else}}^{{pandVersion}}{{/if}}",
+    "@pands/service": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/service{{else}}^{{pandVersion}}{{/if}}"
   }
 }

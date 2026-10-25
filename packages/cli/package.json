@@ -12,7 +12,8 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
-    }
+    },
+    "./bin/pand.js": "./bin/pand.js"
   },
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean",

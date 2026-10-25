@@ -18,6 +18,7 @@ import {
   GLOBAL_ARGS_DEF,
   emitError,
   emitResult,
+  getCliVersion,
   getPlatformRootDir,
   resolveCwd,
 } from "../output.js";
@@ -55,6 +56,7 @@ export async function addServiceInternal(options: AddServiceInternalOptions) {
   const targetDir = path.join(rootDir, "services", serviceName);
 
   const isLocalMonorepo = fs.existsSync(path.join(platformRoot, "packages", "config"));
+  const pandVersion = reloaded.config.pandVersion ?? getCliVersion();
 
   renderTemplateDir(templateDir, targetDir, {
     project: reloaded.config.name,
@@ -66,6 +68,7 @@ export async function addServiceInternal(options: AddServiceInternalOptions) {
     servicePort,
     platformRoot,
     isLocalMonorepo,
+    pandVersion,
   });
 
   if (!options.skipInstall) {
