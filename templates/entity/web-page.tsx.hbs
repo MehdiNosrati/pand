@@ -35,10 +35,10 @@ export default function {{pluralPascal}}Page() {
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["{{service}}", "{{tableName}}", search],
     queryFn: async () => {
-      const qs = search ? `?search=${encodeURIComponent(search)}` : "";
-      const { data, error } = await (sdk.GET as any)("/api/v1/{{service}}/{{pluralKebab}}" + qs);
+      const qs = search ? `?q=${encodeURIComponent(search)}` : "";
+      const { data, error } = await (sdk.GET as any)(`/api/v1/{{service}}/{{pluralKebab}}${qs}`);
       if (error) throw new Error(error?.error?.message ?? "Failed to load {{pluralTitle}}");
-      return (data?.data ?? []) as Array<Record<string, any>>;
+      return (data?.items ?? data?.data ?? []) as Array<Record<string, any>>;
     },
   });
 
@@ -48,7 +48,7 @@ export default function {{pluralPascal}}Page() {
         body: payload,
       });
       if (error) throw new Error(error?.error?.message ?? "Failed to create {{entity}}");
-      return data?.data;
+      return data?.data ?? data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["{{service}}", "{{tableName}}"] });

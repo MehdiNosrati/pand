@@ -269,7 +269,7 @@ export function create{{pluralPascal}}Router(getDb: () => {{pascalService}}DbIns
 {{#each fields}}
     if (input.{{this.name}} !== undefined) {
 {{#if this.isDatetime}}
-      patch.{{this.name}} = input.{{this.name}} ? new Date(input.{{this.name}}) : undefined;
+      patch.{{this.name}} = input.{{this.name}} ? new Date(input.{{this.name}}) : {{#if this.nullable}}null{{else}}undefined{{/if}};
 {{else}}
       patch.{{this.name}} = input.{{this.name}};
 {{/if}}

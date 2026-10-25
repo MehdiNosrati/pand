@@ -1,5 +1,12 @@
-/* Tailwind v4 tokens (@import "tailwindcss";) */
+@import "tailwindcss";
+@source "./";
+@source "../dist";
+@source "../../admin-ui";
+@source "../node_modules/@pand/ui";
+@source "../node_modules/@pand/admin-ui";
+
 :root {
+  color-scheme: light;
   --pand-bg: #f8fafc;
   --pand-surface: #ffffff;
   --pand-border: #e2e8f0;
@@ -8,19 +15,6 @@
   --pand-primary: #2563eb;
   --pand-primary-hover: #1d4ed8;
   --pand-danger: #dc2626;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --pand-bg: #090d16;
-    --pand-surface: #111827;
-    --pand-border: #1e293b;
-    --pand-text: #f8fafc;
-    --pand-muted: #94a3b8;
-    --pand-primary: #3b82f6;
-    --pand-primary-hover: #60a5fa;
-    --pand-danger: #ef4444;
-  }
 }
 
 *,

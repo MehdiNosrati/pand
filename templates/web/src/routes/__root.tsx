@@ -18,6 +18,7 @@ export function RootLayout({
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
+    void currentPath;
     authClient
       .getSession()
       .then((res: any) => {
