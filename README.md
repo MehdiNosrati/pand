@@ -1,11 +1,11 @@
 # Pand — Agent-Native Application Platform
 
-[![Documentation](https://img.shields.io/badge/docs-mehdinosrati.github.io%2Fpand-6366f1?style=flat-square)](https://mehdinosrati.github.io/pand/)
+[![Documentation](https://img.shields.io/badge/docs-mahdins.dev%2Fpand-6366f1?style=flat-square)](https://mahdins.dev/pand/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-10b981?style=flat-square)](https://github.com/MehdiNosrati/pand)
 
 **Pand** is an opinionated, agent-native full-stack and multi-platform application framework. Define your domain once—via CLI, TypeScript contracts, or the built-in Model Context Protocol (MCP) server—and Pand generates and wires your **PostgreSQL schema (Drizzle)**, **OpenAPIHono microservice**, **API Gateway**, **typed Web/Admin/iOS/Android SDKs**, **Next.js UI views**, **SwiftUI views**, **Jetpack Compose screens**, and **Single-Box production deployment**.
 
-👉 **[Read the Full Documentation & API Reference →](https://mehdinosrati.github.io/pand/)**
+👉 **[Read the Full Documentation & API Reference →](https://mahdins.dev/pand/)**
 
 ---
 
@@ -126,4 +126,4 @@ pnpm test
 
 Full documentation—including Getting Started, CLI Reference, Field DSL, Package API Reference, Native Mobile SDKs, Box Deployment, and MCP Agent Integration—is hosted on GitHub Pages:
 
-🔗 **[https://mehdinosrati.github.io/pand/](https://mehdinosrati.github.io/pand/)**
+🔗 **[https://mahdins.dev/pand/](https://mahdins.dev/pand/)** (or `https://mehdinosrati.github.io/pand/`)
