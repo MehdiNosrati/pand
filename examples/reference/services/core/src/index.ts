@@ -1,4 +1,4 @@
-import { serveService } from "@pand/service";
+import { serveService } from "@pands/service";
 import { buildCoreApp } from "./app.js";
 
 const { app, closeDb } = buildCoreApp();

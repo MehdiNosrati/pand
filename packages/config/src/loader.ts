@@ -37,7 +37,7 @@ export async function loadPandConfig(cwd: string = process.cwd()): Promise<Loade
     moduleCache: false,
     fsCache: false,
     alias: {
-      "@pand/config": selfPath,
+      "@pands/config": selfPath,
     },
   });
   const loaded = await jiti.import(configPath, { default: true });

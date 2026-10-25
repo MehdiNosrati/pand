@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { initTelemetry } from "../src/index.js";
 
-describe("@pand/telemetry", () => {
+describe("@pands/telemetry", () => {
   it("no-ops cleanly in test environment when otlpEndpoint is not provided", async () => {
     const handle = initTelemetry({
       serviceName: "core",

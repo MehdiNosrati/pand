@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { AdminApp } from "../src/index.js";
 
-describe("@pand/admin-ui", () => {
+describe("@pands/admin-ui", () => {
   it("renders 403 when user is not an admin and renders entity CRUD when user is admin", () => {
     const forbiddenHtml = renderToStaticMarkup(
       <AdminApp

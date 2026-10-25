@@ -1,0 +1,33 @@
+{
+  "name": "pands",
+  "version": "0.1.0",
+  "description": "Agent-Native Full-Stack Application Platform CLI",
+  "type": "module",
+  "bin": {
+    "pand": "./bin/pands.js",
+    "pands": "./bin/pands.js"
+  },
+  "main": "./bin/pands.js",
+  "files": ["bin"],
+  "scripts": {
+    "build": "node -e \"console.log('pands built')\"",
+    "typecheck": "node -e \"console.log('pands ok')\"",
+    "test": "node -e \"console.log('pands ok')\""
+  },
+  "dependencies": {
+    "@pands/cli": "workspace:*"
+  },
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

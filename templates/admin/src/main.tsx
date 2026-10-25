@@ -1,7 +1,7 @@
-import { AdminApp } from "@pand/admin-ui";
+import { AdminApp } from "@pands/admin-ui";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "@pand/ui/styles.css";
+import "@pands/ui/styles.css";
 
 const rootEl = document.getElementById("root");
 if (rootEl) {

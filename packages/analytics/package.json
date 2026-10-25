@@ -1,5 +1,5 @@
 {
-  "name": "@pand/analytics",
+  "name": "@pands/analytics",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,5 +36,20 @@
   "devDependencies": {
     "@types/react": "^19.0.10",
     "react": "^19.0.0"
-  }
+  },
+  "description": "PostHog Cloud EU wrapper and web/server analytics for Pand",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

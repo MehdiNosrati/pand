@@ -1,5 +1,5 @@
 {
-  "name": "@pand/storage",
+  "name": "@pands/storage",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -19,5 +19,20 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.758.0",
     "@aws-sdk/s3-request-presigner": "^3.758.0"
-  }
+  },
+  "description": "Garage S3 and presigned URL object storage utilities for Pand",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

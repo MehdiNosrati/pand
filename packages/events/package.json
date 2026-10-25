@@ -1,5 +1,5 @@
 {
-  "name": "@pand/events",
+  "name": "@pands/events",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -17,12 +17,27 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@pand/logger": "workspace:*",
-    "@pand/telemetry": "workspace:*",
+    "@pands/logger": "workspace:*",
+    "@pands/telemetry": "workspace:*",
     "pg-boss": "^10.1.5",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@pand/testing": "workspace:*"
-  }
+    "@pands/testing": "workspace:*"
+  },
+  "description": "Durable background queue and cron events using pg-boss for Pand",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@pand/push",
+  "name": "@pands/push",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -17,7 +17,22 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@pand/db": "workspace:*",
+    "@pands/db": "workspace:*",
     "jose": "^6.0.10"
-  }
+  },
+  "description": "APNs and FCM push notification services for Pand",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

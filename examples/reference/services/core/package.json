@@ -9,15 +9,15 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@pand/config": "workspace:*",
-    "@pand/db": "workspace:*",
-    "@pand/gateway": "workspace:*",
-    "@pand/sdk-gen": "workspace:*",
-    "@pand/service": "workspace:*",
+    "@pands/config": "workspace:*",
+    "@pands/db": "workspace:*",
+    "@pands/gateway": "workspace:*",
+    "@pands/sdk-gen": "workspace:*",
+    "@pands/service": "workspace:*",
     "@reference/contracts": "workspace:*",
     "@reference/sdk": "workspace:*"
   },
   "devDependencies": {
-    "@pand/testing": "workspace:*"
+    "@pands/testing": "workspace:*"
   }
 }

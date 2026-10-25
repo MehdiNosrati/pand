@@ -1,4 +1,4 @@
-import { createDb } from "@pand/db";
+import { createDb } from "@pands/db";
 import * as schema from "./schema/index.js";
 
 export type CoreDbInstance = ReturnType<typeof createCoreDb>;

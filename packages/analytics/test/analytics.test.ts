@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildPosthogWebInitOptions, createServerAnalytics } from "../src/index.js";
 
-describe("@pand/analytics", () => {
+describe("@pands/analytics", () => {
   it("configures PostHog EU web options with /ingest proxy and 25% replay sampling, and server local flag polling at 300s", async () => {
     const webOpts = buildPosthogWebInitOptions({
       project: "acme",

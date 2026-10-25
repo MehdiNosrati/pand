@@ -1,6 +1,6 @@
-import { defineConfig } from "@pand/config";
-import { createDb } from "@pand/db";
-import { createTestDatabase } from "@pand/testing";
+import { defineConfig } from "@pands/config";
+import { createDb } from "@pands/db";
+import { createTestDatabase } from "@pands/testing";
 import { describe, expect, it } from "vitest";
 import {
   authTables,
@@ -10,7 +10,7 @@ import {
   resolveRequestActor,
 } from "../src/index.js";
 
-describe("@pand/auth", () => {
+describe("@pands/auth", () => {
   it("buildTrustedOrigins correctly resolves, dedupes, and filters origins", () => {
     const devOrigins = buildTrustedOrigins({
       baseURL: "http://localhost:4001",

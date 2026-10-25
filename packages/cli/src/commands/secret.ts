@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { getGlobalConfigDir } from "@pand/config";
+import { getGlobalConfigDir } from "@pands/config";
 import { Decrypter, Encrypter, armor, generateIdentity, identityToRecipient } from "age-encryption";
 import { defineCommand } from "citty";
 import { GLOBAL_ARGS_DEF, emitError, emitResult, resolveCwd } from "../output.js";

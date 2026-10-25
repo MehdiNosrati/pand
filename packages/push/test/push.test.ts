@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createPushService } from "../src/index.js";
 
-describe("@pand/push", () => {
+describe("@pands/push", () => {
   it("registers iOS APNs and Android FCM device tokens and dispatches push notifications", async () => {
     const sent: Array<{ platform: string; token: string; title: string }> = [];
     const push = createPushService({

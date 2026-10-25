@@ -22,7 +22,7 @@ export const PandConfigSchema = z.object({
   name: z.string().regex(ProjectNameRegex),
   /** Display title, e.g. "Todo App" */
   displayName: z.string().min(1),
-  /** Version of @pand/* packages this project targets */
+  /** Version of @pands/* packages this project targets */
   pandVersion: z.string().default("0.1.0"),
   /** Deterministic base port in [4000, 8900] in steps of 100. Computed from hash(name) if omitted. */
   basePort: z.number().int().min(3000).max(9000).optional(),

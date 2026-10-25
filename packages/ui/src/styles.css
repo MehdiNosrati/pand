@@ -2,8 +2,8 @@
 @source "./";
 @source "../dist";
 @source "../../admin-ui";
-@source "../node_modules/@pand/ui";
-@source "../node_modules/@pand/admin-ui";
+@source "../node_modules/@pands/ui";
+@source "../node_modules/@pands/admin-ui";
 
 :root {
   color-scheme: light;

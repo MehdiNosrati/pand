@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createStorageClient } from "../src/index.js";
 
-describe("@pand/storage", () => {
+describe("@pands/storage", () => {
   it("generates presigned S3 upload and download URLs for Garage", async () => {
     const storage = createStorageClient({
       publicEndpoint: "https://s3.mahdins.dev",

@@ -1,5 +1,5 @@
 {
-  "name": "@pand/telemetry",
+  "name": "@pands/telemetry",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -26,5 +26,20 @@
     "@opentelemetry/sdk-metrics": "^1.30.1",
     "@opentelemetry/sdk-node": "^0.57.2",
     "@opentelemetry/semantic-conventions": "^1.30.0"
-  }
+  },
+  "description": "OpenTelemetry metrics and distributed tracing instrumentation for Pand",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

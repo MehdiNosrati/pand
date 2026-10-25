@@ -1,9 +1,9 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { migrateServiceSchema } from "@pand/db";
-import { createGatewayApp } from "@pand/gateway";
-import { generateTypeScriptSdk } from "@pand/sdk-gen";
-import { createTestDatabase } from "@pand/testing";
+import { migrateServiceSchema } from "@pands/db";
+import { createGatewayApp } from "@pands/gateway";
+import { generateTypeScriptSdk } from "@pands/sdk-gen";
+import { createTestDatabase } from "@pands/testing";
 import { createPandClient } from "@reference/sdk";
 import { describe, expect, it } from "vitest";
 import config from "../../../pand.config.js";

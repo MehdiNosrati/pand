@@ -10,7 +10,7 @@ import {
   resolveProjectPorts,
 } from "../src/index.js";
 
-describe("@pand/config", () => {
+describe("@pands/config", () => {
   it("applies schema defaults accurately", () => {
     const cfg = defineConfig({
       name: "todo",

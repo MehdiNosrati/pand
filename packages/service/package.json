@@ -1,5 +1,5 @@
 {
-  "name": "@pand/service",
+  "name": "@pands/service",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -19,14 +19,29 @@
   "dependencies": {
     "@hono/node-server": "^1.13.8",
     "@hono/zod-openapi": "^0.19.0",
-    "@pand/db": "workspace:*",
-    "@pand/logger": "workspace:*",
-    "@pand/telemetry": "workspace:*",
+    "@pands/db": "workspace:*",
+    "@pands/logger": "workspace:*",
+    "@pands/telemetry": "workspace:*",
     "hono": "^4.7.2",
     "jose": "^6.0.8",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@pand/testing": "workspace:*"
-  }
+    "@pands/testing": "workspace:*"
+  },
+  "description": "Hono-based microservice framework and admin metadata registry for Pand",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

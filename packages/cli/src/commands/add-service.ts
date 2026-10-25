@@ -5,7 +5,7 @@ import {
   addServiceToConfigFile,
   loadPandConfig,
   resolveProjectPorts,
-} from "@pand/config";
+} from "@pands/config";
 import { defineCommand } from "citty";
 import { execa } from "execa";
 import {
@@ -54,6 +54,8 @@ export async function addServiceInternal(options: AddServiceInternalOptions) {
   const templateDir = path.join(platformRoot, "templates", "service");
   const targetDir = path.join(rootDir, "services", serviceName);
 
+  const isLocalMonorepo = fs.existsSync(path.join(platformRoot, "packages", "config"));
+
   renderTemplateDir(templateDir, targetDir, {
     project: reloaded.config.name,
     snakeProject: toSnakeCase(reloaded.config.name),
@@ -63,6 +65,7 @@ export async function addServiceInternal(options: AddServiceInternalOptions) {
     pascalService: toPascalCase(serviceName),
     servicePort,
     platformRoot,
+    isLocalMonorepo,
   });
 
   if (!options.skipInstall) {

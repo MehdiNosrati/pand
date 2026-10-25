@@ -585,19 +585,19 @@
       <div class="nav-group">
         <div class="nav-group-title">Core Packages API</div>
         <ul class="nav-list">
-          <li><a class="nav-link" href="#pkg-config">@pand/config</a></li>
-          <li><a class="nav-link" href="#pkg-service">@pand/service</a></li>
-          <li><a class="nav-link" href="#pkg-gateway">@pand/gateway</a></li>
-          <li><a class="nav-link" href="#pkg-db">@pand/db</a></li>
-          <li><a class="nav-link" href="#pkg-auth">@pand/auth</a></li>
-          <li><a class="nav-link" href="#pkg-sdk-gen">@pand/sdk-gen</a></li>
+          <li><a class="nav-link" href="#pkg-config">@pands/config</a></li>
+          <li><a class="nav-link" href="#pkg-service">@pands/service</a></li>
+          <li><a class="nav-link" href="#pkg-gateway">@pands/gateway</a></li>
+          <li><a class="nav-link" href="#pkg-db">@pands/db</a></li>
+          <li><a class="nav-link" href="#pkg-auth">@pands/auth</a></li>
+          <li><a class="nav-link" href="#pkg-sdk-gen">@pands/sdk-gen</a></li>
         </ul>
       </div>
 
       <div class="nav-group">
         <div class="nav-group-title">UI &amp; Mobile SDKs</div>
         <ul class="nav-list">
-          <li><a class="nav-link" href="#pkg-ui">@pand/ui &amp; @pand/admin-ui</a></li>
+          <li><a class="nav-link" href="#pkg-ui">@pands/ui &amp; @pands/admin-ui</a></li>
           <li><a class="nav-link" href="#mobile-sdks">iOS (SwiftUI) &amp; Android (Compose)</a></li>
         </ul>
       </div>
@@ -605,19 +605,19 @@
       <div class="nav-group">
         <div class="nav-group-title">Platform Services</div>
         <ul class="nav-list">
-          <li><a class="nav-link" href="#pkg-events">@pand/events (BullMQ)</a></li>
-          <li><a class="nav-link" href="#pkg-storage">@pand/storage (S3 / R2)</a></li>
-          <li><a class="nav-link" href="#pkg-push">@pand/push (Expo / APNs / FCM)</a></li>
-          <li><a class="nav-link" href="#pkg-analytics">@pand/analytics</a></li>
-          <li><a class="nav-link" href="#pkg-observability">@pand/logger &amp; @pand/telemetry</a></li>
-          <li><a class="nav-link" href="#pkg-testing">@pand/testing</a></li>
+          <li><a class="nav-link" href="#pkg-events">@pands/events (BullMQ)</a></li>
+          <li><a class="nav-link" href="#pkg-storage">@pands/storage (S3 / R2)</a></li>
+          <li><a class="nav-link" href="#pkg-push">@pands/push (Expo / APNs / FCM)</a></li>
+          <li><a class="nav-link" href="#pkg-analytics">@pands/analytics</a></li>
+          <li><a class="nav-link" href="#pkg-observability">@pands/logger &amp; @pands/telemetry</a></li>
+          <li><a class="nav-link" href="#pkg-testing">@pands/testing</a></li>
         </ul>
       </div>
 
       <div class="nav-group">
         <div class="nav-group-title">AI Agents &amp; Infra</div>
         <ul class="nav-list">
-          <li><a class="nav-link" href="#pkg-mcp">@pand/mcp (13 Agent Tools)</a></li>
+          <li><a class="nav-link" href="#pkg-mcp">@pands/mcp (13 Agent Tools)</a></li>
           <li><a class="nav-link" href="#box-infra">Single-Box Infra &amp; Monitoring</a></li>
         </ul>
       </div>
@@ -717,7 +717,7 @@ pand dev</code></pre>
           </div>
           <div class="feature-card">
             <h3>Dynamic Admin Console</h3>
-            <p>Reactive entity CRUD and Better Auth administrative user management powered by <code>@pand/admin-ui</code>.</p>
+            <p>Reactive entity CRUD and Better Auth administrative user management powered by <code>@pands/admin-ui</code>.</p>
           </div>
         </div>
 
@@ -736,10 +736,10 @@ pand dev</code></pre>
         <p>Services never hardcode port numbers. Every service name is hashed using 32-bit FNV-1a into one of 50 collision-checked slots in <code>4000..8900</code>:</p>
         <div class="code-wrapper">
           <button class="copy-btn" type="button" data-copy>Copy</button>
-          <pre><code>// Port formula in @pand/config:
+          <pre><code>// Port formula in @pands/config:
 // slot = fnv1a32(serviceName) % 50
 // port = 4000 + slot * 100
-import { resolveServicePort, allocateServicePorts } from "@pand/config";
+import { resolveServicePort, allocateServicePorts } from "@pands/config";
 
 const corePort = resolveServicePort("core");       // e.g. 6300
 const billingPort = resolveServicePort("billing"); // e.g. 4700
@@ -748,10 +748,10 @@ const billingPort = resolveServicePort("billing"); // e.g. 4700
         </div>
 
         <h3>2. Gateway Routing &amp; Internal Identity JWT</h3>
-        <p>Clients only talk to <code>@pand/gateway</code> on port <code>3000</code>. The gateway authenticates cookies, bearer tokens, or API keys, enforces sliding-window rate limits, and forwards requests to <code>/api/v1/&lt;service&gt;/*</code> with a short-lived (60s TTL) HS256-signed <code>x-pand-identity</code> JWT:</p>
+        <p>Clients only talk to <code>@pands/gateway</code> on port <code>3000</code>. The gateway authenticates cookies, bearer tokens, or API keys, enforces sliding-window rate limits, and forwards requests to <code>/api/v1/&lt;service&gt;/*</code> with a short-lived (60s TTL) HS256-signed <code>x-pand-identity</code> JWT:</p>
         <div class="code-wrapper">
           <button class="copy-btn" type="button" data-copy>Copy</button>
-          <pre><code>// Decoded x-pand-identity JWT payload verified by @pand/service:
+          <pre><code>// Decoded x-pand-identity JWT payload verified by @pands/service:
 interface PandIdentityPayload {
   sub: string;       // Authenticated user ID
   orgId?: string;    // Active organization / tenant ID
@@ -888,7 +888,7 @@ interface PandIdentityPayload {
       <!-- CLI REFERENCE -->
       <section id="cli-scaffolding" class="doc-section doc-section-deferred">
         <h2>⌨️ CLI Reference — Scaffolding, DB &amp; SDK</h2>
-        <p>The <code>@pand/cli</code> binary (<code>pand</code>) orchestrates the full lifecycle of a Pand workspace. Pass <code>--json</code> to any command for structured JSON output.</p>
+        <p>The <code>@pands/cli</code> binary (<code>pand</code>) orchestrates the full lifecycle of a Pand workspace. Pass <code>--json</code> to any command for structured JSON output.</p>
 
         <div class="table-wrap">
           <table>
@@ -1023,7 +1023,7 @@ interface PandIdentityPayload {
               <tr>
                 <td><code>pand upgrade</code></td>
                 <td><code>--target &lt;ver&gt;</code></td>
-                <td>Upgrades all <code>@pand/*</code> dependencies and runs AST/config codemods.</td>
+                <td>Upgrades all <code>@pands/*</code> dependencies and runs AST/config codemods.</td>
               </tr>
             </tbody>
           </table>
@@ -1036,13 +1036,13 @@ interface PandIdentityPayload {
 
         <div class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/config</code></h3>
+            <h3><code>@pands/config</code></h3>
             <span class="badge">Configuration &amp; Port Hashing</span>
           </div>
           <p>Defines and validates <code>pand.config.ts</code> and computes deterministic FNV-1a service ports.</p>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { defineConfig, loadPandConfig, resolveServicePort, allocateServicePorts } from "@pand/config";
+            <pre><code>import { defineConfig, loadPandConfig, resolveServicePort, allocateServicePorts } from "@pands/config";
 
 export default defineConfig({
   name: "acme-cloud",
@@ -1068,14 +1068,14 @@ export default defineConfig({
 
         <div id="pkg-service" class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/service</code></h3>
+            <h3><code>@pands/service</code></h3>
             <span class="badge">Microservice Runtime &amp; Auto-CRUD</span>
           </div>
           <p>Wraps <code>@hono/zod-openapi</code> with correlation IDs, structured request logging, Prometheus metrics, HS256 gateway identity verification, and one-line Drizzle CRUD route generation.</p>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { createService, defineEntity, registerCrudRoutes } from "@pand/service";
-import { createServiceDb, standardColumns } from "@pand/db";
+            <pre><code>import { createService, defineEntity, registerCrudRoutes } from "@pands/service";
+import { createServiceDb, standardColumns } from "@pands/db";
 import { z } from "zod";
 
 const { db, schema } = createServiceDb("billing");
@@ -1113,13 +1113,13 @@ registerCrudRoutes(service.app, invoiceEntity, db);</code></pre>
 
         <div id="pkg-gateway" class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/gateway</code></h3>
+            <h3><code>@pands/gateway</code></h3>
             <span class="badge">Edge Reverse Proxy &amp; Identity Signer</span>
           </div>
           <p>Routes <code>/api/v1/&lt;service&gt;/*</code> to downstream services, merges service OpenAPI specs at <code>GET /api/v1/openapi.json</code>, exposes entity metadata at <code>GET /api/v1/_meta</code>, and streams real-time Server-Sent Events at <code>GET /api/v1/events/stream</code>.</p>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { createGateway, signInternalIdentity, verifyInternalIdentity } from "@pand/gateway";
+            <pre><code>import { createGateway, signInternalIdentity, verifyInternalIdentity } from "@pands/gateway";
 
 const gateway = createGateway({
   services: {
@@ -1136,13 +1136,13 @@ const gateway = createGateway({
 
         <div id="pkg-db" class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/db</code></h3>
+            <h3><code>@pands/db</code></h3>
             <span class="badge">Per-Service Drizzle ORM &amp; Multi-Tenancy</span>
           </div>
           <p>Provides per-service PostgreSQL schema builders, UUIDv4 + timestamp standard columns, cursor pagination helpers, and organization-scoped query wrappers.</p>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { createServiceDb, standardColumns, scopeToOrg, decodeCursor, encodeCursor } from "@pand/db";
+            <pre><code>import { createServiceDb, standardColumns, scopeToOrg, decodeCursor, encodeCursor } from "@pands/db";
 
 const { db, pgSchema, close } = createServiceDb("core", process.env.DATABASE_URL);
 
@@ -1154,13 +1154,13 @@ const rows = await db.select().from(projects).where(tenantFilter);</code></pre>
 
         <div id="pkg-auth" class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/auth</code></h3>
+            <h3><code>@pands/auth</code></h3>
             <span class="badge">Sessions, JWT, OAuth, API Keys &amp; RBAC</span>
           </div>
           <p>Full authentication and authorization suite for Web (HttpOnly cookies) and Native Mobile (Bearer access + refresh tokens), with built-in PBKDF2 password hashing, OAuth state/code exchange, API key management, and role/permission guards.</p>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { createPandAuth, createAuthClient } from "@pand/auth";
+            <pre><code>import { createPandAuth, createAuthClient } from "@pands/auth";
 
 // Server setup (mounts /register, /login, /logout, /refresh, /me, /api-keys)
 export const auth = createPandAuth({
@@ -1177,13 +1177,13 @@ const session = await authClient.login({ email: "dev@acme.io", password: "correc
 
         <div id="pkg-sdk-gen" class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/sdk-gen</code></h3>
+            <h3><code>@pands/sdk-gen</code></h3>
             <span class="badge">OpenAPI 3.1 → TS, Swift &amp; Kotlin Compiler</span>
           </div>
           <p>Merges per-service OpenAPI 3.1 documents and generates zero-dependency, strongly-typed clients for TypeScript, Swift, and Kotlin.</p>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { mergeOpenApiSpecs, generateTypeScriptSdk, generateSwiftSdk, generateKotlinSdk } from "@pand/sdk-gen";
+            <pre><code>import { mergeOpenApiSpecs, generateTypeScriptSdk, generateSwiftSdk, generateKotlinSdk } from "@pands/sdk-gen";
 
 const merged = mergeOpenApiSpecs([
   { serviceName: "core", spec: coreOpenApi },
@@ -1203,14 +1203,14 @@ const kotlinCode = generateKotlinSdk(merged, "com.acme.pand.sdk");</code></pre>
 
         <div class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/ui</code> &amp; <code>@pand/admin-ui</code></h3>
+            <h3><code>@pands/ui</code> &amp; <code>@pands/admin-ui</code></h3>
             <span class="badge">React Components &amp; Auto-Admin</span>
           </div>
-          <p><code>@pand/ui</code> provides accessible, zero-configuration React components (<code>Button</code>, <code>Input</code>, <code>Select</code>, <code>Badge</code>, <code>Card</code>, <code>Dialog</code>, <code>DataTable</code>, <code>AutoForm</code>, <code>ToastProvider</code>). <code>@pand/admin-ui</code> introspects <code>GET /api/v1/_meta</code> to render a full CRUD Admin Console automatically.</p>
+          <p><code>@pands/ui</code> provides accessible, zero-configuration React components (<code>Button</code>, <code>Input</code>, <code>Select</code>, <code>Badge</code>, <code>Card</code>, <code>Dialog</code>, <code>DataTable</code>, <code>AutoForm</code>, <code>ToastProvider</code>). <code>@pands/admin-ui</code> introspects <code>GET /api/v1/_meta</code> to render a full CRUD Admin Console automatically.</p>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { DataTable, AutoForm, Button } from "@pand/ui";
-import { AdminDashboard } from "@pand/admin-ui";
+            <pre><code>import { DataTable, AutoForm, Button } from "@pands/ui";
+import { AdminDashboard } from "@pands/admin-ui";
 
 // Render an entire multi-service Admin Console with search, pagination, and Zod-backed create/edit modals:
 export default function AdminPage() {
@@ -1248,13 +1248,13 @@ let created = try await client.coreCreateTask(input: CreateTaskInput(title: "Shi
 
         <div class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/events</code></h3>
+            <h3><code>@pands/events</code></h3>
             <span class="badge">BullMQ Event Bus &amp; Cron Jobs</span>
           </div>
           <p>Typed domain events and background jobs backed by Redis + BullMQ in production and an instant in-memory bus in tests.</p>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { defineEvent, createEventBus } from "@pand/events";
+            <pre><code>import { defineEvent, createEventBus } from "@pands/events";
 import { z } from "zod";
 
 export const InvoicePaid = defineEvent("billing.invoice.paid", z.object({
@@ -1272,12 +1272,12 @@ await bus.publish(InvoicePaid, { invoiceId: "550e8400-e29b-41d4-a716-44665544000
 
         <div id="pkg-storage" class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/storage</code></h3>
+            <h3><code>@pands/storage</code></h3>
             <span class="badge">S3 / MinIO / Cloudflare R2 Object Storage</span>
           </div>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { createStorageClient } from "@pand/storage";
+            <pre><code>import { createStorageClient } from "@pands/storage";
 
 const storage = createStorageClient({
   driver: "s3", // or "memory" for unit tests
@@ -1295,13 +1295,13 @@ const uploadUrl = await storage.presignUpload("avatars/u2.png", { expiresInSecon
 
         <div id="pkg-push" class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/push</code> &amp; <code id="pkg-analytics">@pand/analytics</code></h3>
+            <h3><code>@pands/push</code> &amp; <code id="pkg-analytics">@pands/analytics</code></h3>
             <span class="badge">Mobile Push &amp; Product Telemetry</span>
           </div>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { createPushClient } from "@pand/push";
-import { createAnalyticsClient } from "@pand/analytics";
+            <pre><code>import { createPushClient } from "@pands/push";
+import { createAnalyticsClient } from "@pands/analytics";
 
 const push = createPushClient({ driver: "expo", accessToken: process.env.EXPO_ACCESS_TOKEN });
 await push.send({
@@ -1318,14 +1318,14 @@ await analytics.flush();</code></pre>
 
         <div id="pkg-observability" class="api-card">
           <div class="api-card-header">
-            <h3><code>@pand/logger</code>, <code>@pand/telemetry</code> &amp; <code id="pkg-testing">@pand/testing</code></h3>
+            <h3><code>@pands/logger</code>, <code>@pands/telemetry</code> &amp; <code id="pkg-testing">@pands/testing</code></h3>
             <span class="badge">Observability &amp; Integration Testing</span>
           </div>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { createLogger } from "@pand/logger";
-import { createMetricsRegistry } from "@pand/telemetry";
-import { createTestContext, testService } from "@pand/testing";
+            <pre><code>import { createLogger } from "@pands/logger";
+import { createMetricsRegistry } from "@pands/telemetry";
+import { createTestContext, testService } from "@pands/testing";
 
 const logger = createLogger({ service: "billing" });
 logger.info({ invoiceId: "inv_123", apiKey: "secret" }, "Processed invoice"); // apiKey automatically "[REDACTED]"
@@ -1343,8 +1343,8 @@ const res = await client.request("/invoices", {
 
       <!-- AGENT & MCP LAYER -->
       <section id="pkg-mcp" class="doc-section doc-section-deferred">
-        <h2>🤖 Agent Layer &amp; Model Context Protocol (<code>@pand/mcp</code>)</h2>
-        <p>Pand includes a native MCP server (<code>@pand/mcp</code>) over stdio or in-process calls, giving AI coding agents 13 structured tools with built-in safety guardrails (blocking destructive database resets in production and enforcing secret redaction).</p>
+        <h2>🤖 Agent Layer &amp; Model Context Protocol (<code>@pands/mcp</code>)</h2>
+        <p>Pand includes a native MCP server (<code>@pands/mcp</code>) over stdio or in-process calls, giving AI coding agents 13 structured tools with built-in safety guardrails (blocking destructive database resets in production and enforcing secret redaction).</p>
 
         <div class="table-wrap">
           <table>
@@ -1426,7 +1426,7 @@ const res = await client.request("/invoices", {
               <tr>
                 <td><code>pand</code></td>
                 <td><a href="https://github.com/MehdiNosrati/pand/blob/main/skills/pand/SKILL.md" style="color: var(--brand);"><code>skills/pand/SKILL.md</code></a></td>
-                <td>Master platform skill covering the CLI, Field DSL, all <code>@pand/*</code> packages, multi-tenancy, and Box deployment.</td>
+                <td>Master platform skill covering the CLI, Field DSL, all <code>@pands/*</code> packages, multi-tenancy, and Box deployment.</td>
               </tr>
               <tr>
                 <td><code>add-feature</code></td>

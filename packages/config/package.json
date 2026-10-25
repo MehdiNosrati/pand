@@ -1,5 +1,5 @@
 {
-  "name": "@pand/config",
+  "name": "@pands/config",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -19,5 +19,20 @@
   "dependencies": {
     "jiti": "^2.4.2",
     "zod": "^3.24.2"
-  }
+  },
+  "description": "Configuration and port resolution for the Pand platform",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

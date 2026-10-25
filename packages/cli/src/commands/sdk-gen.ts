@@ -1,8 +1,9 @@
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
-import { loadPandConfig } from "@pand/config";
-import { type ServiceOpenApiInput, mergeServiceOpenApiSpecs } from "@pand/gateway";
-import * as sdkGenPkg from "@pand/sdk-gen";
+import { loadPandConfig } from "@pands/config";
+import { type ServiceOpenApiInput, mergeServiceOpenApiSpecs } from "@pands/gateway";
+import * as sdkGenPkg from "@pands/sdk-gen";
 import { defineCommand } from "citty";
 import { createJiti } from "jiti";
 import { GLOBAL_ARGS_DEF, emitError, emitResult, resolveCwd } from "../output.js";
@@ -14,9 +15,15 @@ export interface SdkGenOptions {
 
 export async function sdkGenInternal(options: SdkGenOptions) {
   const { config } = await loadPandConfig(options.rootDir);
+  const require = createRequire(import.meta.url);
   const jiti = createJiti(import.meta.url, {
     moduleCache: false,
     fsCache: false,
+    alias: {
+      "@pands/service": require.resolve("@pands/service"),
+      "@pands/db": require.resolve("@pands/db"),
+      "@pands/config": require.resolve("@pands/config"),
+    },
   });
 
   const serviceSpecs: ServiceOpenApiInput[] = [];

@@ -6,7 +6,7 @@ import {
   enableAppInConfigFile,
   loadPandConfig,
   resolveProjectPorts,
-} from "@pand/config";
+} from "@pands/config";
 import { defineCommand } from "citty";
 import { execa } from "execa";
 import {
@@ -43,6 +43,8 @@ export async function scaffoldClientApp(options: ScaffoldAppOptions): Promise<st
   const ports = resolveProjectPorts(config);
   const targetDir = path.join(rootDir, "apps", appName);
 
+  const isLocalMonorepo = fs.existsSync(path.join(platformRoot, "packages", "config"));
+
   renderTemplateDir(templateDir, targetDir, {
     project: config.name,
     snakeProject: toSnakeCase(config.name),
@@ -54,6 +56,7 @@ export async function scaffoldClientApp(options: ScaffoldAppOptions): Promise<st
     webPort: ports.webPort,
     adminPort: ports.adminPort,
     platformRoot,
+    isLocalMonorepo,
   });
 
   return targetDir;
@@ -90,6 +93,8 @@ export async function newProjectInternal(options: NewProjectOptions) {
   const iosEnabled = Boolean(options.ios);
   const androidEnabled = Boolean(options.android);
 
+  const isLocalMonorepo = fs.existsSync(path.join(platformRoot, "packages", "config"));
+
   renderTemplateDir(projectTemplateDir, projectDir, {
     project: name,
     snakeProject: toSnakeCase(name),
@@ -109,6 +114,7 @@ export async function newProjectInternal(options: NewProjectOptions) {
     iosEnabled,
     androidEnabled,
     platformRoot,
+    isLocalMonorepo,
   });
 
   await addServiceInternal({

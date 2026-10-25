@@ -1,9 +1,9 @@
 import path from "node:path";
-import { createTestDatabase } from "@pand/testing";
+import { createTestDatabase } from "@pands/testing";
 import { describe, expect, it } from "vitest";
 import { createPandMcpServer } from "../src/index.js";
 
-describe("@pand/mcp server & guardrails", () => {
+describe("@pands/mcp server & guardrails", () => {
   it("exposes all 13 MCP tools, enforces prod confirmation guardrails, and enforces read-only SQL", async () => {
     const refDir = path.resolve(import.meta.dirname, "../../../examples/reference");
     const { handlers } = createPandMcpServer(refDir);

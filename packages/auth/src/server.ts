@@ -1,4 +1,4 @@
-import type { PandConfig } from "@pand/config";
+import type { PandConfig } from "@pands/config";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, bearer } from "better-auth/plugins";

@@ -1,4 +1,4 @@
-import type { PandServiceApp } from "@pand/service";
+import type { PandServiceApp } from "@pands/service";
 import type { CoreDbInstance } from "../db/index.js";
 import { createNotesRouter } from "./notes.js";
 // pand:route-imports

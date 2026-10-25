@@ -1,5 +1,5 @@
 {
-  "name": "@pand/admin-ui",
+  "name": "@pands/admin-ui",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -17,8 +17,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@pand/auth": "workspace:*",
-    "@pand/ui": "workspace:*",
+    "@pands/auth": "workspace:*",
+    "@pands/ui": "workspace:*",
     "@tanstack/react-query": "^5.66.9",
     "lucide-react": "^0.475.0"
   },
@@ -31,5 +31,20 @@
     "@types/react-dom": "^19.0.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
-  }
+  },
+  "description": "Auto-generated admin panel UI and CRUD components for Pand",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

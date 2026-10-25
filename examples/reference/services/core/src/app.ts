@@ -1,4 +1,4 @@
-import { createServiceApp } from "@pand/service";
+import { createServiceApp } from "@pands/service";
 import { type CoreDbInstance, createCoreDb } from "./db/index.js";
 import { mountRoutes } from "./routes/index.js";
 import { noteAdminMeta } from "./routes/notes.js";

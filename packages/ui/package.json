@@ -1,5 +1,5 @@
 {
-  "name": "@pand/ui",
+  "name": "@pands/ui",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsup src/index.tsx --format esm --dts --clean --external react --external react-dom",
     "typecheck": "tsc --noEmit",
-    "test": "node -e \"console.log('@pand/ui ok')\""
+    "test": "node -e \"console.log('@pands/ui ok')\""
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -31,5 +31,20 @@
     "@types/react-dom": "^19.0.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
-  }
+  },
+  "description": "Tailwind CSS and React component library for Pand applications",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist", "src/styles.css"]
 }

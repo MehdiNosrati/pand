@@ -7,7 +7,7 @@ import {
   mintTestInternalToken,
 } from "../src/index.js";
 
-describe("@pand/testing", () => {
+describe("@pands/testing", () => {
   it("creates and cleans up an isolated Postgres test database", async () => {
     const handle = await createTestDatabase();
     try {

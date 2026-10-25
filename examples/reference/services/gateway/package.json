@@ -9,8 +9,8 @@
     "test": "node -e \"console.log('gateway ok')\""
   },
   "dependencies": {
-    "@pand/config": "workspace:*",
-    "@pand/gateway": "workspace:*",
-    "@pand/service": "workspace:*"
+    "@pands/config": "workspace:*",
+    "@pands/gateway": "workspace:*",
+    "@pands/service": "workspace:*"
   }
 }

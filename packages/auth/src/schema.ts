@@ -1,4 +1,4 @@
-import { boolean, pgSchema, text, timestamp, varchar } from "@pand/db";
+import { boolean, pgSchema, text, timestamp, varchar } from "@pands/db";
 import pg from "pg";
 
 export const authSchema = pgSchema("auth");

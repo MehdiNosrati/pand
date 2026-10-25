@@ -3,7 +3,7 @@ import { trace } from "@opentelemetry/api";
 import { describe, expect, it, vi } from "vitest";
 import { createLogger } from "../src/index.js";
 
-describe("@pand/logger", () => {
+describe("@pands/logger", () => {
   it("writes structured JSON logs and redacts sensitive fields", () => {
     const lines: string[] = [];
     const dest = new Writable({

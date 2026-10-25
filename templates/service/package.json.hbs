@@ -11,16 +11,16 @@
   "dependencies": {
     "@{{project}}/contracts": "workspace:*",
     "@{{project}}/sdk": "workspace:*",
-    "@pand/config": "link:{{platformRoot}}/packages/config",
-    "@pand/db": "link:{{platformRoot}}/packages/db",
-    "@pand/logger": "link:{{platformRoot}}/packages/logger",
-    "@pand/service": "link:{{platformRoot}}/packages/service",
-    "@pand/telemetry": "link:{{platformRoot}}/packages/telemetry",
+    "@pands/config": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/config{{else}}^0.1.0{{/if}}",
+    "@pands/db": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/db{{else}}^0.1.0{{/if}}",
+    "@pands/logger": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/logger{{else}}^0.1.0{{/if}}",
+    "@pands/service": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/service{{else}}^0.1.0{{/if}}",
+    "@pands/telemetry": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/telemetry{{else}}^0.1.0{{/if}}",
     "drizzle-orm": "^0.39.3",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@pand/testing": "link:{{platformRoot}}/packages/testing",
+    "@pands/testing": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/testing{{else}}^0.1.0{{/if}}",
     "drizzle-kit": "^0.30.4",
     "tsx": "^4.19.3"
   }

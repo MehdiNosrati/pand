@@ -1,4 +1,4 @@
-import type { NavItem } from "@pand/ui";
+import type { NavItem } from "@pands/ui";
 
 export const navItems: NavItem[] = [
   { label: "Dashboard", to: "/" },

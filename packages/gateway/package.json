@@ -1,5 +1,5 @@
 {
-  "name": "@pand/gateway",
+  "name": "@pands/gateway",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -18,16 +18,31 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
-    "@pand/auth": "workspace:*",
-    "@pand/config": "workspace:*",
-    "@pand/db": "workspace:*",
-    "@pand/logger": "workspace:*",
-    "@pand/service": "workspace:*",
-    "@pand/telemetry": "workspace:*",
+    "@pands/auth": "workspace:*",
+    "@pands/config": "workspace:*",
+    "@pands/db": "workspace:*",
+    "@pands/logger": "workspace:*",
+    "@pands/service": "workspace:*",
+    "@pands/telemetry": "workspace:*",
     "@scalar/hono-api-reference": "^0.5.170",
     "hono": "^4.7.2"
   },
   "devDependencies": {
-    "@pand/testing": "workspace:*"
-  }
+    "@pands/testing": "workspace:*"
+  },
+  "description": "Reverse proxy, routing, and Better Auth authentication gateway for Pand",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

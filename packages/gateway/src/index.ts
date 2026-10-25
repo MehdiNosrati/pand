@@ -1,11 +1,16 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { type PandAuthInstance, authTables, createPandAuth, resolveRequestActor } from "@pand/auth";
-import { type PandConfig, resolveProjectPorts } from "@pand/config";
-import { createDb } from "@pand/db";
-import { createLogger } from "@pand/logger";
-import { type AdminEntityMeta, PandError, serveService, signInternalToken } from "@pand/service";
+import {
+  type PandAuthInstance,
+  authTables,
+  createPandAuth,
+  resolveRequestActor,
+} from "@pands/auth";
+import { type PandConfig, resolveProjectPorts } from "@pands/config";
+import { createDb } from "@pands/db";
+import { createLogger } from "@pands/logger";
+import { type AdminEntityMeta, PandError, serveService, signInternalToken } from "@pands/service";
 import { apiReference } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { type ServiceOpenApiInput, mergeServiceOpenApiSpecs } from "./openapi-merge.js";

@@ -1,5 +1,5 @@
-import { createPandAuthClient } from "@pand/auth/client";
-import { AppShell } from "@pand/ui";
+import { createPandAuthClient } from "@pands/auth/client";
+import { AppShell } from "@pands/ui";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { navItems } from "../nav.js";

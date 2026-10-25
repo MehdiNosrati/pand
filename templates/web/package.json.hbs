@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@{{project}}/sdk": "workspace:*",
-    "@pand/auth": "link:{{platformRoot}}/packages/auth",
-    "@pand/ui": "link:{{platformRoot}}/packages/ui",
+    "@pands/auth": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/auth{{else}}^0.1.0{{/if}}",
+    "@pands/ui": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/ui{{else}}^0.1.0{{/if}}",
     "@tanstack/react-query": "^5.66.9",
     "lucide-react": "^0.475.0",
     "react": "^19.0.0",

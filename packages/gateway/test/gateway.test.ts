@@ -1,9 +1,9 @@
-import { defineConfig } from "@pand/config";
-import { createRoute, createServiceApp, requireAuth, z } from "@pand/service";
+import { defineConfig } from "@pands/config";
+import { createRoute, createServiceApp, requireAuth, z } from "@pands/service";
 import { describe, expect, it } from "vitest";
 import { createGatewayApp, mergeServiceOpenApiSpecs } from "../src/index.js";
 
-describe("@pand/gateway", () => {
+describe("@pands/gateway", () => {
   it("merges service OpenAPI specs and handles schema collisions", () => {
     const merged = mergeServiceOpenApiSpecs(
       [

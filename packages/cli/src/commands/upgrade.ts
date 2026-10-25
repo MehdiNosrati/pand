@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { loadPandConfig } from "@pand/config";
+import { loadPandConfig } from "@pands/config";
 import { defineCommand } from "citty";
 import { renderTemplateDir } from "../generators/template.js";
 import {

@@ -15,8 +15,8 @@ import {
   queryTracesInternal,
   resolveDevDatabaseUrl,
   sdkGenInternal,
-} from "@pand/cli";
-import { loadPandConfig, resolveProjectPorts } from "@pand/config";
+} from "@pands/cli";
+import { loadPandConfig, resolveProjectPorts } from "@pands/config";
 import pg from "pg";
 import { z } from "zod";
 

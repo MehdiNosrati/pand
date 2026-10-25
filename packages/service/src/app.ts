@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { type Logger, createLogger } from "@pand/logger";
-import { SpanStatusCode, trace } from "@pand/telemetry";
+import { type Logger, createLogger } from "@pands/logger";
+import { SpanStatusCode, trace } from "@pands/telemetry";
 import { type ServiceVariables, internalTokenMiddleware } from "./auth-middleware.js";
 import { ErrorEnvelopeSchema, PandError } from "./errors.js";
 

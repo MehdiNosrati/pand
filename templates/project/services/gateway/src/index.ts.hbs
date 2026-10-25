@@ -1,4 +1,4 @@
-import { serveService } from "@pand/service";
+import { serveService } from "@pands/service";
 import { app } from "./app.js";
 
 serveService(app, {

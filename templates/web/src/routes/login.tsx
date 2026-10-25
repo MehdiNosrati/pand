@@ -1,4 +1,4 @@
-import { Button, Card, Input } from "@pand/ui";
+import { Button, Card, Input } from "@pands/ui";
 import type React from "react";
 import { useState } from "react";
 import { authClient } from "./__root.js";

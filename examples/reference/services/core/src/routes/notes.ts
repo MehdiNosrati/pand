@@ -1,4 +1,4 @@
-import { desc, eq, gt, ilike } from "@pand/db";
+import { desc, eq, gt, ilike } from "@pands/db";
 import {
   type AdminEntityMeta,
   OpenAPIHono,
@@ -7,7 +7,7 @@ import {
   createRoute,
   requireAuth,
   z,
-} from "@pand/service";
+} from "@pands/service";
 import type { CoreDbInstance } from "../db/index.js";
 import { notes } from "../db/schema/notes.js";
 

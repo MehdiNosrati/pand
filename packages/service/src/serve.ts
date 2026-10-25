@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
-import type { Logger } from "@pand/logger";
-import { initTelemetry } from "@pand/telemetry";
+import type { Logger } from "@pands/logger";
+import { initTelemetry } from "@pands/telemetry";
 
 export interface ServableApp {
   fetch: (request: Request, ...args: any[]) => Response | Promise<Response>;

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { loadPandConfig } from "@pand/config";
+import { loadPandConfig } from "@pands/config";
 import { defineCommand } from "citty";
 import { execa } from "execa";
 import { GLOBAL_ARGS_DEF, emitError, emitResult, resolveCwd } from "../output.js";

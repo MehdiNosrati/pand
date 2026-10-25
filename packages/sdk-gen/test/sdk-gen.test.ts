@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { generateKotlinSdk, generateSwiftSdk, generateTypeScriptSdk } from "../src/index.js";
 
-describe("@pand/sdk-gen", () => {
+describe("@pands/sdk-gen", () => {
   it("generates openapi.json, schema.d.ts, and typed client wrapper and detects drift", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "pand-sdk-gen-"));
     try {

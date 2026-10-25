@@ -1,4 +1,4 @@
-import { loadPandConfig } from "@pand/config";
+import { loadPandConfig } from "@pands/config";
 import { defineCommand } from "citty";
 import { GLOBAL_ARGS_DEF, emitError, emitResult, resolveCwd } from "../output.js";
 import { deployInternal } from "./deploy.js";

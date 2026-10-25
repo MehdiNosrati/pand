@@ -1,4 +1,4 @@
-import { boolean, pgSchema, text, timestamp, uuid, varchar } from "@pand/db";
+import { boolean, pgSchema, text, timestamp, uuid, varchar } from "@pands/db";
 
 export const coreSchema = pgSchema("core");
 

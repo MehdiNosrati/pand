@@ -1,4 +1,4 @@
-import { Badge, Card } from "@pand/ui";
+import { Badge, Card } from "@pands/ui";
 import { navItems } from "../nav.js";
 
 export default function IndexPage() {

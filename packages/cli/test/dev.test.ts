@@ -1,4 +1,4 @@
-import { defineConfig, resolveProjectPorts } from "@pand/config";
+import { defineConfig, resolveProjectPorts } from "@pands/config";
 import { describe, expect, it } from "vitest";
 import { buildAppDevSpawns } from "../src/commands/dev.js";
 

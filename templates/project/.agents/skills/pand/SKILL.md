@@ -1,6 +1,6 @@
 ---
 name: pand
-description: Build, scaffold, migrate, test, debug, and deploy full-stack web, admin, iOS (SwiftUI), and Android (Jetpack Compose) applications using the Pand Agent-Native Application Platform (`pand` CLI, `@pand/*` packages, and `@pand/mcp` tools).
+description: Build, scaffold, migrate, test, debug, and deploy full-stack web, admin, iOS (SwiftUI), and Android (Jetpack Compose) applications using the Pand Agent-Native Application Platform (`pand` CLI, `@pands/*` packages, and `@pands/mcp` tools).
 ---
 
 # Pand Platform Skill
@@ -9,7 +9,7 @@ Use this skill whenever creating a new Pand project, adding microservices or ent
 
 ## Golden Rules
 
-1. **Always Scaffold First**: Use `pand new`, `pand add service`, and `pand add entity` (or their `@pand/mcp` tool equivalents) instead of writing boilerplate files by hand.
+1. **Always Scaffold First**: Use `pand new`, `pand add service`, and `pand add entity` (or their `@pands/mcp` tool equivalents) instead of writing boilerplate files by hand.
 2. **Always Pass `--json` in Agent Workflows**: Every `pand` CLI command supports `--json` for deterministic machine-readable output.
 3. **Never Edit Generated Artifacts**:
    - Do not hand-edit `packages/sdk/src/**`, `ios/Sources/PandSDK/PandSDK.swift`, `android/pand-sdk/**`, `**/openapi.json`, or `**/drizzle/meta/**`.
@@ -64,21 +64,21 @@ pand db migrate --json
 # Seed service databases
 pand db seed --json
 ```
-- Always use `createServiceDb("<service>")` from `@pand/db`.
-- Never join across different service PostgreSQL schemas; communicate across services via the SDK or `@pand/events`.
+- Always use `createServiceDb("<service>")` from `@pands/db`.
+- Never join across different service PostgreSQL schemas; communicate across services via the SDK or `@pands/events`.
 - For multi-tenant tables with an `organizationId` column, scope queries using `scopeToOrg(table.organizationId, ctx.var.identity?.orgId)`.
 
-### 5. Custom Non-CRUD Endpoints (`@pand/service`)
+### 5. Custom Non-CRUD Endpoints (`@pands/service`)
 1. Define request/response Zod schemas in `services/<service>/src/routes/` using `z` from `zod`.
 2. Register the route on `service.app` using `createRoute` from `@hono/zod-openapi`.
 3. Read the verified gateway identity from `c.get("identity")` (`{ sub, orgId, roles, scopes }`).
 4. Run `pand sdk gen && pand check`.
 
 ### 6. Event Bus, Storage, Push & Analytics
-- **Events (`@pand/events`)**: Define typed events with `defineEvent("domain.action", z.object({...}))` and publish/subscribe via `createEventBus()`.
-- **Object Storage (`@pand/storage`)**: Use `createStorageClient()` for `putObject`, `getObject`, `presignUpload`, and `presignDownload` (use `driver: "memory"` in tests).
-- **Push Notifications (`@pand/push`)**: Use `createPushClient()` for Expo, APNs, and FCM delivery.
-- **Analytics (`@pand/analytics`)**: Use `createAnalyticsClient()` for batched event tracking.
+- **Events (`@pands/events`)**: Define typed events with `defineEvent("domain.action", z.object({...}))` and publish/subscribe via `createEventBus()`.
+- **Object Storage (`@pands/storage`)**: Use `createStorageClient()` for `putObject`, `getObject`, `presignUpload`, and `presignDownload` (use `driver: "memory"` in tests).
+- **Push Notifications (`@pands/push`)**: Use `createPushClient()` for Expo, APNs, and FCM delivery.
+- **Analytics (`@pands/analytics`)**: Use `createAnalyticsClient()` for batched event tracking.
 
 ### 7. Deployment, Previews, Backups & Observability
 ```bash

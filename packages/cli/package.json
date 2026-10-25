@@ -1,5 +1,5 @@
 {
-  "name": "@pand/cli",
+  "name": "@pands/cli",
   "version": "0.1.0",
   "type": "module",
   "bin": {
@@ -16,16 +16,18 @@
   },
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean",
+    "prepack": "node -e \"const fs=require('fs'); fs.cpSync('../../templates', './templates', { recursive: true }); fs.cpSync('../../infra', './infra', { recursive: true });\"",
+    "postpack": "node -e \"const fs=require('fs'); fs.rmSync('./templates', { recursive: true, force: true }); fs.rmSync('./infra', { recursive: true, force: true });\"",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
-    "@pand/auth": "workspace:*",
-    "@pand/config": "workspace:*",
-    "@pand/db": "workspace:*",
-    "@pand/gateway": "workspace:*",
-    "@pand/sdk-gen": "workspace:*",
-    "@pand/service": "workspace:*",
+    "@pands/auth": "workspace:*",
+    "@pands/config": "workspace:*",
+    "@pands/db": "workspace:*",
+    "@pands/gateway": "workspace:*",
+    "@pands/sdk-gen": "workspace:*",
+    "@pands/service": "workspace:*",
     "@types/pg": "^8.11.11",
     "age-encryption": "^0.2.3",
     "chokidar": "^4.0.3",
@@ -38,6 +40,21 @@
     "pg": "^8.13.3"
   },
   "devDependencies": {
-    "@pand/testing": "workspace:*"
-  }
+    "@pands/testing": "workspace:*"
+  },
+  "description": "Agent-Native Full-Stack Application Platform CLI",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist", "bin", "templates", "infra"]
 }

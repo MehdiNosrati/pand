@@ -32,7 +32,7 @@ importers:
 
   examples/reference:
     dependencies:
-      '@pand/config':
+      '@pands/config':
         specifier: workspace:*
         version: link:../../packages/config
       zod:
@@ -53,19 +53,19 @@ importers:
 
   examples/reference/services/core:
     dependencies:
-      '@pand/config':
+      '@pands/config':
         specifier: workspace:*
         version: link:../../../../packages/config
-      '@pand/db':
+      '@pands/db':
         specifier: workspace:*
         version: link:../../../../packages/db
-      '@pand/gateway':
+      '@pands/gateway':
         specifier: workspace:*
         version: link:../../../../packages/gateway
-      '@pand/sdk-gen':
+      '@pands/sdk-gen':
         specifier: workspace:*
         version: link:../../../../packages/sdk-gen
-      '@pand/service':
+      '@pands/service':
         specifier: workspace:*
         version: link:../../../../packages/service
       '@reference/contracts':
@@ -75,28 +75,28 @@ importers:
         specifier: workspace:*
         version: link:../../packages/sdk
     devDependencies:
-      '@pand/testing':
+      '@pands/testing':
         specifier: workspace:*
         version: link:../../../../packages/testing
 
   examples/reference/services/gateway:
     dependencies:
-      '@pand/config':
+      '@pands/config':
         specifier: workspace:*
         version: link:../../../../packages/config
-      '@pand/gateway':
+      '@pands/gateway':
         specifier: workspace:*
         version: link:../../../../packages/gateway
-      '@pand/service':
+      '@pands/service':
         specifier: workspace:*
         version: link:../../../../packages/service
 
   packages/admin-ui:
     dependencies:
-      '@pand/auth':
+      '@pands/auth':
         specifier: workspace:*
         version: link:../auth
-      '@pand/ui':
+      '@pands/ui':
         specifier: workspace:*
         version: link:../ui
       '@tanstack/react-query':
@@ -137,10 +137,10 @@ importers:
 
   packages/auth:
     dependencies:
-      '@pand/config':
+      '@pands/config':
         specifier: workspace:*
         version: link:../config
-      '@pand/db':
+      '@pands/db':
         specifier: workspace:*
         version: link:../db
       '@types/pg':
@@ -156,7 +156,7 @@ importers:
         specifier: ^8.13.3
         version: 8.23.1
     devDependencies:
-      '@pand/testing':
+      '@pands/testing':
         specifier: workspace:*
         version: link:../testing
       react:
@@ -165,22 +165,22 @@ importers:
 
   packages/cli:
     dependencies:
-      '@pand/auth':
+      '@pands/auth':
         specifier: workspace:*
         version: link:../auth
-      '@pand/config':
+      '@pands/config':
         specifier: workspace:*
         version: link:../config
-      '@pand/db':
+      '@pands/db':
         specifier: workspace:*
         version: link:../db
-      '@pand/gateway':
+      '@pands/gateway':
         specifier: workspace:*
         version: link:../gateway
-      '@pand/sdk-gen':
+      '@pands/sdk-gen':
         specifier: workspace:*
         version: link:../sdk-gen
-      '@pand/service':
+      '@pands/service':
         specifier: workspace:*
         version: link:../service
       '@types/pg':
@@ -214,7 +214,7 @@ importers:
         specifier: ^8.13.3
         version: 8.23.1
     devDependencies:
-      '@pand/testing':
+      '@pands/testing':
         specifier: workspace:*
         version: link:../testing
 
@@ -239,7 +239,7 @@ importers:
         specifier: ^8.13.3
         version: 8.23.1
     devDependencies:
-      '@pand/testing':
+      '@pands/testing':
         specifier: workspace:*
         version: link:../testing
       drizzle-kit:
@@ -248,10 +248,10 @@ importers:
 
   packages/events:
     dependencies:
-      '@pand/logger':
+      '@pands/logger':
         specifier: workspace:*
         version: link:../logger
-      '@pand/telemetry':
+      '@pands/telemetry':
         specifier: workspace:*
         version: link:../telemetry
       pg-boss:
@@ -261,7 +261,7 @@ importers:
         specifier: ^3.24.2
         version: 3.25.76
     devDependencies:
-      '@pand/testing':
+      '@pands/testing':
         specifier: workspace:*
         version: link:../testing
 
@@ -270,22 +270,22 @@ importers:
       '@hono/node-server':
         specifier: ^1.13.8
         version: 1.19.17(hono@4.13.13)
-      '@pand/auth':
+      '@pands/auth':
         specifier: workspace:*
         version: link:../auth
-      '@pand/config':
+      '@pands/config':
         specifier: workspace:*
         version: link:../config
-      '@pand/db':
+      '@pands/db':
         specifier: workspace:*
         version: link:../db
-      '@pand/logger':
+      '@pands/logger':
         specifier: workspace:*
         version: link:../logger
-      '@pand/service':
+      '@pands/service':
         specifier: workspace:*
         version: link:../service
-      '@pand/telemetry':
+      '@pands/telemetry':
         specifier: workspace:*
         version: link:../telemetry
       '@scalar/hono-api-reference':
@@ -295,7 +295,7 @@ importers:
         specifier: ^4.7.2
         version: 4.13.13
     devDependencies:
-      '@pand/testing':
+      '@pands/testing':
         specifier: workspace:*
         version: link:../testing
 
@@ -316,10 +316,10 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.6.1
         version: 1.32.2(zod@3.25.76)
-      '@pand/cli':
+      '@pands/cli':
         specifier: workspace:*
         version: link:../cli
-      '@pand/config':
+      '@pands/config':
         specifier: workspace:*
         version: link:../config
       '@types/pg':
@@ -332,13 +332,25 @@ importers:
         specifier: ^3.24.2
         version: 3.25.76
     devDependencies:
-      '@pand/testing':
+      '@pands/testing':
         specifier: workspace:*
         version: link:../testing
 
+  packages/pand:
+    dependencies:
+      '@pands/cli':
+        specifier: workspace:*
+        version: link:../cli
+
+  packages/pands:
+    dependencies:
+      '@pands/cli':
+        specifier: workspace:*
+        version: link:../cli
+
   packages/push:
     dependencies:
-      '@pand/db':
+      '@pands/db':
         specifier: workspace:*
         version: link:../db
       jose:
@@ -365,13 +377,13 @@ importers:
       '@hono/zod-openapi':
         specifier: ^0.19.0
         version: 0.19.10(hono@4.13.13)(zod@3.25.76)
-      '@pand/db':
+      '@pands/db':
         specifier: workspace:*
         version: link:../db
-      '@pand/logger':
+      '@pands/logger':
         specifier: workspace:*
         version: link:../logger
-      '@pand/telemetry':
+      '@pands/telemetry':
         specifier: workspace:*
         version: link:../telemetry
       hono:
@@ -384,7 +396,7 @@ importers:
         specifier: ^3.24.2
         version: 3.25.76
     devDependencies:
-      '@pand/testing':
+      '@pands/testing':
         specifier: workspace:*
         version: link:../testing
 

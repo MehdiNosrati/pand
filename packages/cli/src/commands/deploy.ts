@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { type PandConfig, loadPandConfig } from "@pand/config";
+import { type PandConfig, loadPandConfig } from "@pands/config";
 import { defineCommand } from "citty";
 import { GLOBAL_ARGS_DEF, emitError, emitResult, resolveCwd } from "../output.js";
 import { checkProjectInternal } from "./check.js";

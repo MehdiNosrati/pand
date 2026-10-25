@@ -10,8 +10,8 @@
     "test": "node -e \"console.log('admin ok')\""
   },
   "dependencies": {
-    "@pand/admin-ui": "link:{{platformRoot}}/packages/admin-ui",
-    "@pand/ui": "link:{{platformRoot}}/packages/ui",
+    "@pands/admin-ui": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/admin-ui{{else}}^0.1.0{{/if}}",
+    "@pands/ui": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/ui{{else}}^0.1.0{{/if}}",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

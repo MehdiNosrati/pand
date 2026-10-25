@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createTestDatabase } from "@pand/testing";
+import { createTestDatabase } from "@pands/testing";
 import { describe, expect, it } from "vitest";
 import {
   boolean,
@@ -22,7 +22,7 @@ const tasks = coreSchema.table("tasks", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-describe("@pand/db", () => {
+describe("@pands/db", () => {
   it("runs schema-isolated migrations, health check, and Drizzle queries", async () => {
     const testDb = await createTestDatabase();
     const tmpMigrations = fs.mkdtempSync(path.join(os.tmpdir(), "pand-migrations-"));

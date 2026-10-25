@@ -5,7 +5,7 @@ import {
   type ProjectPorts,
   loadPandConfig,
   resolveProjectPorts,
-} from "@pand/config";
+} from "@pands/config";
 import chokidar from "chokidar";
 import { defineCommand } from "citty";
 import { consola } from "consola";

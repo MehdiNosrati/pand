@@ -1,5 +1,5 @@
 {
-  "name": "@pand/mcp",
+  "name": "@pands/mcp",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -18,13 +18,28 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
-    "@pand/cli": "workspace:*",
-    "@pand/config": "workspace:*",
+    "@pands/cli": "workspace:*",
+    "@pands/config": "workspace:*",
     "@types/pg": "^8.11.11",
     "pg": "^8.13.3",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@pand/testing": "workspace:*"
-  }
+    "@pands/testing": "workspace:*"
+  },
+  "description": "Model Context Protocol (MCP) server for Pand AI agents",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

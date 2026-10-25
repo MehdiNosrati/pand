@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { consola } from "consola";
@@ -36,8 +37,17 @@ export function getPlatformRootDir(): string {
     return path.resolve(process.env.PAND_PLATFORM_ROOT);
   }
   const currentFile = fileURLToPath(import.meta.url);
-  // packages/cli/dist/index.js or packages/cli/src/output.ts -> ../../../
-  return path.resolve(path.dirname(currentFile), "../../..");
+  // Monorepo root check (dev environment: currentFile is in packages/cli/dist or packages/cli/src)
+  const candidateMonorepo = path.resolve(path.dirname(currentFile), "../../..");
+  if (fs.existsSync(path.join(candidateMonorepo, "packages", "config"))) {
+    return candidateMonorepo;
+  }
+  // Standalone installed package (npm global or npx: packages/cli contains templates/ and infra/)
+  const pkgRoot = path.resolve(path.dirname(currentFile), "..");
+  if (fs.existsSync(path.join(pkgRoot, "templates"))) {
+    return pkgRoot;
+  }
+  return candidateMonorepo;
 }
 
 export function emitResult<T>(args: GlobalCliArgs, payload: T, humanMessage?: string): T {

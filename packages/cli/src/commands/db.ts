@@ -1,9 +1,10 @@
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import net from "node:net";
 import path from "node:path";
-import { ensureAuthTables } from "@pand/auth";
-import { loadPandConfig, resolveProjectPorts } from "@pand/config";
-import { migrateServiceSchema } from "@pand/db";
+import { ensureAuthTables } from "@pands/auth";
+import { loadPandConfig, resolveProjectPorts } from "@pands/config";
+import { migrateServiceSchema } from "@pands/db";
 import { defineCommand } from "citty";
 import { getTableConfig } from "drizzle-orm/pg-core";
 import { execa } from "execa";
@@ -276,7 +277,15 @@ export async function ensureServiceMigrationsFallback(
     return false;
   }
 
-  const jiti = createJiti(import.meta.url, { moduleCache: false, fsCache: false });
+  const require = createRequire(import.meta.url);
+  const jiti = createJiti(import.meta.url, {
+    moduleCache: false,
+    fsCache: false,
+    alias: {
+      "@pands/db": require.resolve("@pands/db"),
+      "@pands/config": require.resolve("@pands/config"),
+    },
+  });
   const mod = (await jiti.import(schemaIndexPath)) as Record<string, unknown>;
 
   const sqlStatements: string[] = [`CREATE SCHEMA IF NOT EXISTS "${serviceName}";`];

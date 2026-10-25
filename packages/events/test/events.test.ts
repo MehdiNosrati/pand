@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { createEventBus, defineEvent } from "../src/index.js";
 
-describe("@pand/events", () => {
+describe("@pands/events", () => {
   it("validates event payloads with Zod, dispatches to subscribers, and registers cron schedules", async () => {
     const OrderPaidEvent = defineEvent(
       "billing.order_paid",

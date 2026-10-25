@@ -1,4 +1,4 @@
-import { createGatewayApp } from "@pand/gateway";
+import { createGatewayApp } from "@pands/gateway";
 import config from "../../../pand.config.js";
 
 export const app = createGatewayApp({

@@ -1,4 +1,4 @@
-import { createPandAuthClient } from "@pand/auth/client";
+import { createPandAuthClient } from "@pands/auth/client";
 import {
   Badge,
   Button,
@@ -10,7 +10,7 @@ import {
   Table,
   Textarea,
   Toast,
-} from "@pand/ui";
+} from "@pands/ui";
 import type React from "react";
 import { useEffect, useState } from "react";
 
@@ -64,7 +64,13 @@ export function DynamicEntityCrud({ meta }: DynamicEntityCrudProps) {
   const openCreate = () => {
     const initial: Record<string, any> = {};
     for (const f of meta.fields) {
-      if (f.name === "id" || f.name === "createdAt" || f.name === "updatedAt" || (f as any).readOnly) continue;
+      if (
+        f.name === "id" ||
+        f.name === "createdAt" ||
+        f.name === "updatedAt" ||
+        (f as any).readOnly
+      )
+        continue;
       initial[f.name] = f.type === "boolean" ? false : (f.enumValues?.[0] ?? "");
     }
     setFormState(initial);
@@ -104,7 +110,8 @@ export function DynamicEntityCrud({ meta }: DynamicEntityCrudProps) {
   };
 
   const editableFields = meta.fields.filter(
-    (f) => f.name !== "id" && f.name !== "createdAt" && f.name !== "updatedAt" && !(f as any).readOnly,
+    (f) =>
+      f.name !== "id" && f.name !== "createdAt" && f.name !== "updatedAt" && !(f as any).readOnly,
   );
 
   return (
@@ -600,11 +607,7 @@ export function AdminApp(props: AdminAppProps) {
                         {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "—"}
                       </td>
                       <td className="space-x-2 px-4 py-3 text-right">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => handleToggleRole(u)}
-                        >
+                        <Button variant="secondary" size="sm" onClick={() => handleToggleRole(u)}>
                           {u.role === "admin" ? "Demote to User" : "Make Admin"}
                         </Button>
                         <Button

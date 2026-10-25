@@ -11,7 +11,7 @@ import {
   z,
 } from "../src/index.js";
 
-describe("@pand/service", () => {
+describe("@pands/service", () => {
   it("exposes /healthz, /readyz, /openapi.json, and /_pand/meta with standard auth & error envelopes", async () => {
     const app = createServiceApp({
       name: "core",

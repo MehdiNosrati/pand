@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type React from "react";
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import "@pand/ui/styles.css";
+import "@pands/ui/styles.css";
 import { RootLayout } from "./routes/__root.js";
 import IndexPage from "./routes/index.js";
 import LoginPage from "./routes/login.js";

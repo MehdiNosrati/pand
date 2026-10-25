@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parseFieldDsl } from "../src/index.js";
 
-describe("@pand/cli field-dsl parser", () => {
+describe("@pands/cli field-dsl parser", () => {
   it("parses all supported types, nullable modifiers, and default values", () => {
     const fields = parseFieldDsl(
       "title:string,notes:text?,done:boolean=false,priority:enum(low|medium|high)=medium,dueAt:datetime?,views:int=0,rating:float?,ownerId:uuid",

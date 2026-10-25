@@ -1,5 +1,5 @@
 {
-  "name": "@pand/testing",
+  "name": "@pands/testing",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -20,5 +20,20 @@
     "@types/pg": "^8.11.11",
     "jose": "^6.0.8",
     "pg": "^8.13.3"
-  }
+  },
+  "description": "Test harnesses and ephemeral test database utilities for Pand",
+  "license": "MIT",
+  "author": "Mehdi Nosrati",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MehdiNosrati/pand.git"
+  },
+  "homepage": "https://github.com/MehdiNosrati/pand#readme",
+  "bugs": {
+    "url": "https://github.com/MehdiNosrati/pand/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": ["dist"]
 }

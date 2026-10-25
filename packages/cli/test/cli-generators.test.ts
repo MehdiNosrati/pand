@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createTestDatabase } from "@pand/testing";
+import { createTestDatabase } from "@pands/testing";
 import { describe, expect, it } from "vitest";
 import {
   addEntityInternal,
@@ -13,7 +13,7 @@ import {
   writeDevArtifacts,
 } from "../src/index.js";
 
-describe("@pand/cli generators and dev commands", () => {
+describe("@pands/cli generators and dev commands", () => {
   it("scaffolds a project, adds a service, adds an entity, generates migrations + SDK, and migrates DB", async () => {
     const tmpBase = fs.mkdtempSync(path.join(os.tmpdir(), "pand-cli-gen-"));
     const testDb = await createTestDatabase();
