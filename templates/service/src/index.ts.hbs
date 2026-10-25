@@ -1,0 +1,11 @@
+import { serveService } from "@pand/service";
+import { build{{pascalService}}App } from "./app.js";
+
+const { app, closeDb } = build{{pascalService}}App();
+
+serveService(app, {
+  serviceName: "{{service}}",
+  projectName: "{{project}}",
+  port: Number(process.env.PORT ?? {{servicePort}}),
+  closeDb,
+});

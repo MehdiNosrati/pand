@@ -1,0 +1,28 @@
+{
+  "name": "@pand/events",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@pand/logger": "workspace:*",
+    "@pand/telemetry": "workspace:*",
+    "pg-boss": "^10.1.5",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@pand/testing": "workspace:*"
+  }
+}

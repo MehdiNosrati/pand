@@ -1,0 +1,22 @@
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+const gatewayPort = Number(process.env.GATEWAY_PORT ?? 4001);
+const webPort = Number(process.env.PORT ?? 4002);
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: webPort,
+    proxy: {
+      "/api": {
+        target: `http://localhost:${gatewayPort}`,
+        changeOrigin: true,
+      },
+      "/ingest": {
+        target: `http://localhost:${gatewayPort}`,
+        changeOrigin: true,
+      },
+    },
+  },
+});

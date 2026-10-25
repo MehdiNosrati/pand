@@ -1,0 +1,150 @@
+services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:2.9-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /opt/pand/data/caddy:/data
+    networks:
+      - pand_edge
+      - pand_internal
+
+  postgres:
+    build:
+      context: ./postgres
+    image: pand-postgres:17
+    restart: unless-stopped
+    env_file:
+      - /opt/pand/env/system.env
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=1GB"
+      - "-c"
+      - "effective_cache_size=3GB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "archive_mode=on"
+      - "-c"
+      - "archive_command=wal-g wal-push %p"
+    volumes:
+      - /opt/pand/data/postgres:/var/lib/postgresql/data
+      - /opt/pand/data/backups:/opt/pand/data/backups
+    networks:
+      - pand_internal
+
+  valkey:
+    image: valkey/valkey:8-alpine
+    restart: unless-stopped
+    command: ["valkey-server", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - /opt/pand/data/valkey:/data
+    networks:
+      - pand_internal
+
+  garage:
+    image: dxflrs/garage:v1.0.1
+    restart: unless-stopped
+    volumes:
+      - /opt/pand/data/garage:/var/lib/garage
+    labels:
+      caddy: s3.mahdins.dev
+      caddy.reverse_proxy: "{{upstreams 3900}}"
+    networks:
+      - pand_edge
+      - pand_internal
+
+  alloy:
+    image: grafana/alloy:v1.6.1
+    restart: unless-stopped
+    command: ["run", "/etc/alloy/config.alloy"]
+    volumes:
+      - ./observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - pand_internal
+
+  loki:
+    image: grafana/loki:3.3.2
+    restart: unless-stopped
+    command: ["-config.file=/etc/loki/loki-config.yaml"]
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+    volumes:
+      - ./observability/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
+      - /opt/pand/data/loki:/loki
+    networks:
+      - pand_internal
+
+  tempo:
+    image: grafana/tempo:2.7.0
+    restart: unless-stopped
+    command: ["-config.file=/etc/tempo/tempo-config.yaml"]
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    volumes:
+      - ./observability/tempo/tempo-config.yaml:/etc/tempo/tempo-config.yaml:ro
+      - /opt/pand/data/tempo:/var/tempo
+    networks:
+      - pand_internal
+
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=14d"
+      - "--web.enable-remote-write-receiver"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /opt/pand/data/prometheus:/prometheus
+    networks:
+      - pand_internal
+
+  grafana:
+    image: grafana/grafana:11.5.1
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - /opt/pand/data/grafana:/var/lib/grafana
+    labels:
+      caddy: grafana.mahdins.dev
+      caddy.reverse_proxy: "{{upstreams 3000}}"
+    networks:
+      - pand_edge
+      - pand_internal
+
+  ntfy:
+    image: binwiederhier/ntfy:v2.11.0
+    restart: unless-stopped
+    command: ["serve"]
+    labels:
+      caddy: ntfy.mahdins.dev
+      caddy.reverse_proxy: "{{upstreams 80}}"
+    networks:
+      - pand_edge
+      - pand_internal
+
+networks:
+  pand_edge:
+    name: pand_edge
+  pand_internal:
+    name: pand_internal

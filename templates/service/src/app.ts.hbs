@@ -1,0 +1,35 @@
+import { createServiceApp } from "@pand/service";
+import { type {{pascalService}}DbInstance, create{{pascalService}}Db } from "./db/index.js";
+import { mountRoutes } from "./routes/index.js";
+// pand:admin-meta-imports
+
+export function build{{pascalService}}App(databaseUrl?: string) {
+  let dbInstance: {{pascalService}}DbInstance | null = null;
+  const getDbInstance = () => {
+    if (!dbInstance) {
+      dbInstance = create{{pascalService}}Db(databaseUrl);
+    }
+    return dbInstance;
+  };
+
+  const app = createServiceApp({
+    name: "{{service}}",
+    dbHealth: () => getDbInstance().checkHealth(),
+  });
+
+  // pand:admin-meta
+
+  mountRoutes(app, () => getDbInstance().db);
+
+  return {
+    app,
+    closeDb: async () => {
+      if (dbInstance) {
+        await dbInstance.close();
+      }
+    },
+  };
+}
+
+export const { app } = build{{pascalService}}App();
+export default app;

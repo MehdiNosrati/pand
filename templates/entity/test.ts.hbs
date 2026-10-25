@@ -1,0 +1,75 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { migrateServiceSchema } from "@pand/db";
+import { createTestDatabase, mintTestInternalToken } from "@pand/testing";
+import { describe, expect, it } from "vitest";
+import { build{{pascalService}}App } from "../src/app.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+describe("{{service}} {{entity}} CRUD", () => {
+  it("creates, lists, gets, updates, and deletes {{entity}}", async () => {
+    const testDb = await createTestDatabase();
+    const { app, closeDb } = build{{pascalService}}App(testDb.databaseUrl);
+
+    try {
+      await migrateServiceSchema({
+        databaseUrl: testDb.databaseUrl,
+        serviceName: "{{service}}",
+        migrationsFolder: path.resolve(__dirname, "../drizzle"),
+      });
+
+      const token = await mintTestInternalToken({
+        sub: "user-test-1",
+        role: "admin",
+      });
+
+      const headers = {
+        "content-type": "application/json",
+        "x-pand-internal-token": token,
+      };
+
+      const createPayload = {
+{{#each fields}}
+        {{this.name}}: {{this.sampleValueJson}},
+{{/each}}
+      };
+
+      const createRes = await app.request("/{{pluralKebab}}", {
+        method: "POST",
+        headers,
+        body: JSON.stringify(createPayload),
+      });
+      expect(createRes.status).toBe(201);
+      const created = (await createRes.json()) as { id: string };
+      expect(created.id).toBeDefined();
+
+      const listRes = await app.request("/{{pluralKebab}}", { headers });
+      expect(listRes.status).toBe(200);
+      const listBody = (await listRes.json()) as { items: Array<{ id: string }> };
+      expect(listBody.items.some((item) => item.id === created.id)).toBe(true);
+
+      const getRes = await app.request(`/{{pluralKebab}}/${created.id}`, { headers });
+      expect(getRes.status).toBe(200);
+
+      const patchRes = await app.request(`/{{pluralKebab}}/${created.id}`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify({}),
+      });
+      expect(patchRes.status).toBe(200);
+
+      const delRes = await app.request(`/{{pluralKebab}}/${created.id}`, {
+        method: "DELETE",
+        headers,
+      });
+      expect(delRes.status).toBe(200);
+
+      const afterDelRes = await app.request(`/{{pluralKebab}}/${created.id}`, { headers });
+      expect(afterDelRes.status).toBe(404);
+    } finally {
+      await closeDb();
+      await testDb.cleanup();
+    }
+  });
+});

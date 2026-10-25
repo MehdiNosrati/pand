@@ -1,0 +1,34 @@
+{
+  "uid": "pand-box-overview",
+  "title": "Pand Box Overview (CPU, RAM, Disk, Swap)",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "id": 1,
+      "title": "CPU Usage %",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Available RAM (MB)",
+      "type": "timeseries",
+      "targets": [{ "expr": "node_memory_MemAvailable_bytes / 1024 / 1024" }]
+    },
+    {
+      "id": 3,
+      "title": "Disk Used %",
+      "type": "gauge",
+      "targets": [
+        {
+          "expr": "100 - ((node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100)"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@reference/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "node -e \"console.log('sdk ok')\""
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.13.4"
+  }
+}

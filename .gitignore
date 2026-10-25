@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.turbo/
+.pand/
+coverage/
+*.tsbuildinfo
+.DS_Store
+.env
+.env.local
+
+# Local planning & spec artifacts
+/design_overview.md
+/spec_contracts.md
+/phases_0_2.md
+/phases_3_4.md
+/phases_5_8.md

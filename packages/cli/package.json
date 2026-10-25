@@ -1,0 +1,43 @@
+{
+  "name": "@pand/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "pand": "./bin/pand.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@pand/auth": "workspace:*",
+    "@pand/config": "workspace:*",
+    "@pand/db": "workspace:*",
+    "@pand/gateway": "workspace:*",
+    "@pand/sdk-gen": "workspace:*",
+    "@pand/service": "workspace:*",
+    "@types/pg": "^8.11.11",
+    "age-encryption": "^0.2.3",
+    "chokidar": "^4.0.3",
+    "citty": "^0.1.6",
+    "consola": "^3.4.0",
+    "drizzle-orm": "^0.39.3",
+    "execa": "^9.5.2",
+    "handlebars": "^4.7.8",
+    "jiti": "^2.4.2",
+    "pg": "^8.13.3"
+  },
+  "devDependencies": {
+    "@pand/testing": "workspace:*"
+  }
+}

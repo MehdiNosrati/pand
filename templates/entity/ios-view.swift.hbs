@@ -1,0 +1,40 @@
+import SwiftUI
+import Observation
+import PandSDK
+
+@MainActor
+@Observable
+public final class {{entity}}ListViewModel {
+    public var items: [{{entity}}] = []
+    public var searchText: String = ""
+    public var isLoading: Bool = false
+
+    public init() {}
+}
+
+public struct {{entity}}ListView: View {
+    @State private var viewModel = {{entity}}ListViewModel()
+    @State private var showingCreateSheet = false
+
+    public init() {}
+
+    public var body: some View {
+        NavigationStack {
+            List(viewModel.items) { item in
+                VStack(alignment: .leading) {
+                    Text(String(describing: item.{{displayField}}))
+                        .font(.headline)
+                }
+            }
+            .navigationTitle("{{pluralTitle}}")
+            .searchable(text: $viewModel.searchText)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Add {{entity}}") {
+                        showingCreateSheet = true
+                    }
+                }
+            }
+        }
+    }
+}

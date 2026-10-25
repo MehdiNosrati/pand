@@ -1,0 +1,16 @@
+{
+  "name": "@reference/gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "node -e \"console.log('gateway ok')\""
+  },
+  "dependencies": {
+    "@pand/config": "workspace:*",
+    "@pand/gateway": "workspace:*",
+    "@pand/service": "workspace:*"
+  }
+}

@@ -1,0 +1,212 @@
+import { createPandClient } from "@{{project}}/sdk";
+import {
+  Badge,
+  Button,
+  Card,
+  Checkbox,
+  Dialog,
+  Input,
+  Select,
+  Table,
+  Textarea,
+  Toast,
+} from "@pand/ui";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type React from "react";
+import { useState } from "react";
+
+const sdk = createPandClient({ baseUrl: window.location.origin });
+
+export default function {{pluralPascal}}Page() {
+  const queryClient = useQueryClient();
+  const [search, setSearch] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const [formState, setFormState] = useState<Record<string, any>>({
+{{#each fields}}
+{{#if hasDefaultValue}}
+    {{name}}: {{{defaultValueJson}}},
+{{else}}
+    {{name}}: {{#if isBoolean}}false{{else}}""{{/if}},
+{{/if}}
+{{/each}}
+  });
+
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: ["{{service}}", "{{tableName}}", search],
+    queryFn: async () => {
+      const qs = search ? `?search=${encodeURIComponent(search)}` : "";
+      const { data, error } = await (sdk.GET as any)("/api/v1/{{service}}/{{pluralKebab}}" + qs);
+      if (error) throw new Error(error?.error?.message ?? "Failed to load {{pluralTitle}}");
+      return (data?.data ?? []) as Array<Record<string, any>>;
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (payload: Record<string, any>) => {
+      const { data, error } = await (sdk.POST as any)("/api/v1/{{service}}/{{pluralKebab}}", {
+        body: payload,
+      });
+      if (error) throw new Error(error?.error?.message ?? "Failed to create {{entity}}");
+      return data?.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["{{service}}", "{{tableName}}"] });
+      setModalOpen(false);
+      setToast("Created {{entity}}");
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await (sdk.DELETE as any)(`/api/v1/{{service}}/{{pluralKebab}}/${id}`);
+      if (error) throw new Error(error?.error?.message ?? "Failed to delete {{entity}}");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["{{service}}", "{{tableName}}"] });
+      setToast("Deleted {{entity}}");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createMutation.mutate(formState);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">{{pluralTitle}}</h1>
+          <p className="text-sm text-slate-500">
+            Manage {{pluralTitle}} (/api/v1/{{service}}/{{pluralKebab}})
+          </p>
+        </div>
+        <Button onClick={() => setModalOpen(true)}>Create {{entity}}</Button>
+      </div>
+
+      <Card className="p-4">
+        <Input
+          placeholder="Search {{pluralTitle}}..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </Card>
+
+      {isLoading ? (
+        <Card>Loading {{pluralTitle}}...</Card>
+      ) : (
+        <Table>
+          <thead className="border-b border-slate-200 bg-slate-50">
+            <tr>
+{{#each fields}}
+              <th className="px-4 py-3 font-semibold text-slate-700">{{label}}</th>
+{{/each}}
+              <th className="px-4 py-3 text-right font-semibold text-slate-700">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-200">
+            {items.map((item) => (
+              <tr key={item.id} className="hover:bg-slate-50">
+{{#each fields}}
+                <td className="px-4 py-3">
+                  {typeof item.{{name}} === "boolean" ? (
+                    <Badge variant={item.{{name}} ? "success" : "default"}>
+                      {item.{{name}} ? "Yes" : "No"}
+                    </Badge>
+                  ) : (
+                    String(item.{{name}} ?? "—")
+                  )}
+                </td>
+{{/each}}
+                <td className="px-4 py-3 text-right">
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => deleteMutation.mutate(item.id)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
+
+      <Dialog
+        open={modalOpen}
+        title="Create {{entity}}"
+        onClose={() => setModalOpen(false)}
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+{{#each fields}}
+{{#if isBoolean}}
+          <Checkbox
+            id="{{name}}"
+            label="{{label}}"
+            checked={Boolean(formState.{{name}})}
+            onChange={(e) =>
+              setFormState((s) => ({ ...s, {{name}}: e.target.checked }))
+            }
+          />
+{{else if isEnum}}
+          <Select
+            id="{{name}}"
+            label="{{label}}"
+            value={String(formState.{{name}} ?? "")}
+            options={[
+{{#each enumValues}}
+              { label: "{{this}}", value: "{{this}}" },
+{{/each}}
+            ]}
+            onChange={(e) =>
+              setFormState((s) => ({ ...s, {{name}}: e.target.value }))
+            }
+          />
+{{else if isInt}}
+          <Input
+            id="{{name}}"
+            label="{{label}}"
+            type="number"
+            value={String(formState.{{name}} ?? "")}
+            onChange={(e) =>
+              setFormState((s) => ({ ...s, {{name}}: Number(e.target.value) }))
+            }
+          />
+{{else if isFloat}}
+          <Input
+            id="{{name}}"
+            label="{{label}}"
+            type="number"
+            value={String(formState.{{name}} ?? "")}
+            onChange={(e) =>
+              setFormState((s) => ({ ...s, {{name}}: Number(e.target.value) }))
+            }
+          />
+{{else}}
+          <Input
+            id="{{name}}"
+            label="{{label}}"
+            value={String(formState.{{name}} ?? "")}
+            onChange={(e) =>
+              setFormState((s) => ({ ...s, {{name}}: e.target.value }))
+            }
+          />
+{{/if}}
+{{/each}}
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="secondary" onClick={() => setModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={createMutation.isPending}>
+              {createMutation.isPending ? "Saving..." : "Create"}
+            </Button>
+          </div>
+        </form>
+      </Dialog>
+
+      <Toast message={toast} variant="success" onDismiss={() => setToast(null)} />
+    </div>
+  );
+}

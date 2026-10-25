@@ -1,0 +1,33 @@
+{
+  "name": "@pand/gateway",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.8",
+    "@pand/auth": "workspace:*",
+    "@pand/config": "workspace:*",
+    "@pand/db": "workspace:*",
+    "@pand/logger": "workspace:*",
+    "@pand/service": "workspace:*",
+    "@pand/telemetry": "workspace:*",
+    "@scalar/hono-api-reference": "^0.5.170",
+    "hono": "^4.7.2"
+  },
+  "devDependencies": {
+    "@pand/testing": "workspace:*"
+  }
+}

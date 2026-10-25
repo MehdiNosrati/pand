@@ -1,0 +1,24 @@
+name: {{pascalProject}}
+options:
+  bundleIdPrefix: dev.mahdins
+  deploymentTarget:
+    iOS: "18.0"
+packages:
+  PandSDK:
+    path: ./Packages/PandSDK
+  PostHog:
+    url: https://github.com/PostHog/posthog-ios
+    from: 3.19.0
+targets:
+  {{pascalProject}}:
+    type: application
+    platform: iOS
+    sources:
+      - Sources/App
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.mahdins.{{project}}
+        SWIFT_VERSION: "6.0"
+    dependencies:
+      - package: PandSDK
+      - package: PostHog

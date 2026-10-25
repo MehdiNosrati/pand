@@ -1,0 +1,15 @@
+import { pgSchema, timestamp, uuid{{#if drizzleImports}}, {{drizzleImports}}{{/if}} } from "@pand/db";
+
+const {{camelService}}Schema = pgSchema("{{service}}");
+
+export const {{pluralCamel}} = {{camelService}}Schema.table("{{tableName}}", {
+  id: uuid("id").primaryKey().defaultRandom(),
+{{#each fields}}
+  {{this.name}}: {{this.drizzleColumnCode}},
+{{/each}}
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});

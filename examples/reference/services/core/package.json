@@ -1,0 +1,23 @@
+{
+  "name": "@reference/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@pand/config": "workspace:*",
+    "@pand/db": "workspace:*",
+    "@pand/gateway": "workspace:*",
+    "@pand/sdk-gen": "workspace:*",
+    "@pand/service": "workspace:*",
+    "@reference/contracts": "workspace:*",
+    "@reference/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@pand/testing": "workspace:*"
+  }
+}

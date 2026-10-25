@@ -1,0 +1,14 @@
+{
+  "uid": "pand-logs-explorer",
+  "title": "Pand Live Logs Explorer",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Error & Warning Log Stream",
+      "type": "logs",
+      "targets": [{ "expr": "{pand_project=~\".+\"} | json | level=~\"error|warn\"" }]
+    }
+  ]
+}

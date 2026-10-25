@@ -1,0 +1,11 @@
+import { createDb } from "@pand/db";
+import * as schema from "./schema/index.js";
+
+export type {{pascalService}}DbInstance = ReturnType<typeof create{{pascalService}}Db>;
+
+export function create{{pascalService}}Db(databaseUrl?: string) {
+  return createDb({
+    databaseUrl,
+    schema,
+  });
+}

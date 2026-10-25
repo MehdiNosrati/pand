@@ -1,0 +1,15 @@
+import { defineConfig } from "@pand/config";
+
+export default defineConfig({
+  name: "{{project}}",
+  displayName: "{{displayName}}",
+  basePort: {{basePort}},
+  services: {
+  },
+  apps: {
+    web: {{webEnabled}},
+    admin: {{adminEnabled}},
+    ios: {{iosEnabled}},
+    android: {{androidEnabled}},
+  },
+});

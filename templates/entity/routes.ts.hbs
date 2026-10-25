@@ -1,0 +1,321 @@
+import { desc, eq, gt{{#if firstStringField}}, ilike{{/if}} } from "@pand/db";
+import {
+  type AdminEntityMeta,
+  OpenAPIHono,
+  PandError,
+  type ServiceVariables,
+  createRoute,
+  requireAuth,
+  z,
+} from "@pand/service";
+import type { {{pascalService}}DbInstance } from "../db/index.js";
+import { {{pluralCamel}} } from "../db/schema/{{pluralKebab}}.js";
+
+export const {{entity}}Schema = z
+  .object({
+    id: z.string().uuid(),
+{{#each fields}}
+    {{this.name}}: {{this.zodEntityCode}},
+{{/each}}
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  })
+  .openapi("{{entity}}");
+
+export const Create{{entity}}Schema = z
+  .object({
+{{#each fields}}
+    {{this.name}}: {{this.zodCreateCode}},
+{{/each}}
+  })
+  .openapi("Create{{entity}}Input");
+
+export const Update{{entity}}Schema = z
+  .object({
+{{#each fields}}
+    {{this.name}}: {{this.zodUpdateCode}},
+{{/each}}
+  })
+  .openapi("Update{{entity}}Input");
+
+export const {{entity}}ListResponseSchema = z
+  .object({
+    items: z.array({{entity}}Schema),
+    nextCursor: z.string().nullable(),
+  })
+  .openapi("{{entity}}ListResponse");
+
+export const {{camelEntity}}AdminMeta: AdminEntityMeta = {
+  service: "{{service}}",
+  entity: "{{entity}}",
+  table: "{{tableName}}",
+  basePath: "/api/v1/{{service}}/{{pluralKebab}}",
+  primaryKey: "id",
+  displayField: "{{displayField}}",
+  fields: [
+    { name: "id", label: "ID", type: "uuid", required: true, readOnly: true },
+{{#each fields}}
+    {
+      name: "{{this.name}}",
+      label: "{{this.label}}",
+      type: "{{this.type}}",
+      required: {{this.required}},
+      readOnly: false,
+{{#if this.enumValuesJson}}
+      enumValues: {{this.enumValuesJson}},
+{{/if}}
+{{#if this.hasDefaultValue}}
+      defaultValue: {{this.defaultValueJson}},
+{{/if}}
+    },
+{{/each}}
+    { name: "createdAt", label: "Created At", type: "datetime", required: true, readOnly: true },
+    { name: "updatedAt", label: "Updated At", type: "datetime", required: true, readOnly: true },
+  ],
+};
+
+function serialize{{entity}}(row: typeof {{pluralCamel}}.$inferSelect): z.infer<typeof {{entity}}Schema> {
+  return {
+    id: row.id,
+{{#each fields}}
+{{#if this.isDatetime}}
+    {{this.name}}: row.{{this.name}} ? row.{{this.name}}.toISOString() : {{#if this.nullable}}null{{else}}new Date().toISOString(){{/if}},
+{{else if this.isEnum}}
+    {{this.name}}: row.{{this.name}} as z.infer<typeof {{../entity}}Schema>["{{this.name}}"],
+{{else}}
+    {{this.name}}: row.{{this.name}},
+{{/if}}
+{{/each}}
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
+export function create{{pluralPascal}}Router(getDb: () => {{pascalService}}DbInstance["db"]) {
+  const router = new OpenAPIHono<{ Variables: ServiceVariables }>();
+
+  const listRoute = createRoute({
+    method: "get",
+    path: "/{{pluralKebab}}",
+    middleware: [requireAuth()] as const,
+    request: {
+      query: z.object({
+        limit: z.coerce.number().int().min(1).max(100).default(20),
+        cursor: z.string().optional(),
+        q: z.string().optional(),
+      }),
+    },
+    responses: {
+      200: {
+        description: "List {{pluralTitle}}",
+        content: {
+          "application/json": {
+            schema: {{entity}}ListResponseSchema,
+          },
+        },
+      },
+    },
+  });
+
+  router.openapi(listRoute, async (c) => {
+    const { limit, cursor, q } = c.req.valid("query");
+    const db = getDb();
+{{#if firstStringField}}
+    const whereClause = q
+      ? ilike({{pluralCamel}}.{{firstStringField}}, `%${q}%`)
+      : cursor
+        ? gt({{pluralCamel}}.id, cursor)
+        : undefined;
+{{else}}
+    void q;
+    const whereClause = cursor ? gt({{pluralCamel}}.id, cursor) : undefined;
+{{/if}}
+
+    let rows = await db
+      .select()
+      .from({{pluralCamel}})
+      .where(whereClause)
+      .orderBy(desc({{pluralCamel}}.createdAt))
+      .limit(limit + 1);
+
+    let nextCursor: string | null = null;
+    if (rows.length > limit) {
+      const popped = rows.pop();
+      nextCursor = popped?.id ?? null;
+      rows = rows.slice(0, limit);
+    }
+
+    return c.json(
+      {
+        items: rows.map(serialize{{entity}}),
+        nextCursor,
+      },
+      200,
+    );
+  });
+
+  const getRoute = createRoute({
+    method: "get",
+    path: "/{{pluralKebab}}/{id}",
+    middleware: [requireAuth()] as const,
+    request: {
+      params: z.object({ id: z.string().uuid() }),
+    },
+    responses: {
+      200: {
+        description: "Get {{entity}}",
+        content: {
+          "application/json": {
+            schema: {{entity}}Schema,
+          },
+        },
+      },
+    },
+  });
+
+  router.openapi(getRoute, async (c) => {
+    const { id } = c.req.valid("param");
+    const db = getDb();
+    const [row] = await db.select().from({{pluralCamel}}).where(eq({{pluralCamel}}.id, id));
+    if (!row) {
+      throw PandError.notFound("{{entity}} not found");
+    }
+    return c.json(serialize{{entity}}(row), 200);
+  });
+
+  const createEntityRoute = createRoute({
+    method: "post",
+    path: "/{{pluralKebab}}",
+    middleware: [requireAuth()] as const,
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: Create{{entity}}Schema,
+          },
+        },
+      },
+    },
+    responses: {
+      201: {
+        description: "Created {{entity}}",
+        content: {
+          "application/json": {
+            schema: {{entity}}Schema,
+          },
+        },
+      },
+    },
+  });
+
+  router.openapi(createEntityRoute, async (c) => {
+    const input = c.req.valid("json");
+    const db = getDb();
+    const [created] = await db
+      .insert({{pluralCamel}})
+      .values({
+{{#each fields}}
+{{#if this.isDatetime}}
+        {{this.name}}: input.{{this.name}} ? new Date(input.{{this.name}}) : {{#if this.nullable}}null{{else}}new Date(){{/if}},
+{{else if this.nullable}}
+        {{this.name}}: input.{{this.name}} ?? null,
+{{else}}
+        {{this.name}}: input.{{this.name}},
+{{/if}}
+{{/each}}
+      })
+      .returning();
+
+    if (!created) {
+      throw PandError.internal("Failed to create {{entity}}");
+    }
+    return c.json(serialize{{entity}}(created), 201);
+  });
+
+  const updateEntityRoute = createRoute({
+    method: "patch",
+    path: "/{{pluralKebab}}/{id}",
+    middleware: [requireAuth()] as const,
+    request: {
+      params: z.object({ id: z.string().uuid() }),
+      body: {
+        content: {
+          "application/json": {
+            schema: Update{{entity}}Schema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: "Updated {{entity}}",
+        content: {
+          "application/json": {
+            schema: {{entity}}Schema,
+          },
+        },
+      },
+    },
+  });
+
+  router.openapi(updateEntityRoute, async (c) => {
+    const { id } = c.req.valid("param");
+    const input = c.req.valid("json");
+    const db = getDb();
+
+    const patch: Partial<typeof {{pluralCamel}}.$inferInsert> = {
+      updatedAt: new Date(),
+    };
+{{#each fields}}
+    if (input.{{this.name}} !== undefined) {
+{{#if this.isDatetime}}
+      patch.{{this.name}} = input.{{this.name}} ? new Date(input.{{this.name}}) : undefined;
+{{else}}
+      patch.{{this.name}} = input.{{this.name}};
+{{/if}}
+    }
+{{/each}}
+
+    const [updated] = await db
+      .update({{pluralCamel}})
+      .set(patch)
+      .where(eq({{pluralCamel}}.id, id))
+      .returning();
+
+    if (!updated) {
+      throw PandError.notFound("{{entity}} not found");
+    }
+    return c.json(serialize{{entity}}(updated), 200);
+  });
+
+  const deleteEntityRoute = createRoute({
+    method: "delete",
+    path: "/{{pluralKebab}}/{id}",
+    middleware: [requireAuth()] as const,
+    request: {
+      params: z.object({ id: z.string().uuid() }),
+    },
+    responses: {
+      200: {
+        description: "Deleted {{entity}}",
+        content: {
+          "application/json": {
+            schema: z.object({ deleted: z.boolean(), id: z.string().uuid() }),
+          },
+        },
+      },
+    },
+  });
+
+  router.openapi(deleteEntityRoute, async (c) => {
+    const { id } = c.req.valid("param");
+    const db = getDb();
+    const [deleted] = await db.delete({{pluralCamel}}).where(eq({{pluralCamel}}.id, id)).returning();
+    if (!deleted) {
+      throw PandError.notFound("{{entity}} not found");
+    }
+    return c.json({ deleted: true, id }, 200);
+  });
+
+  return router;
+}

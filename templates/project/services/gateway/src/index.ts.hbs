@@ -1,0 +1,8 @@
+import { serveService } from "@pand/service";
+import { app } from "./app.js";
+
+serveService(app, {
+  serviceName: "gateway",
+  projectName: "{{project}}",
+  port: Number(process.env.PORT ?? {{gatewayPort}}),
+});

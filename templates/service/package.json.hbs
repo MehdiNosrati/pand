@@ -1,0 +1,26 @@
+{
+  "name": "@{{project}}/{{service}}",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@{{project}}/contracts": "workspace:*",
+    "@{{project}}/sdk": "workspace:*",
+    "@pand/config": "link:{{platformRoot}}/packages/config",
+    "@pand/db": "link:{{platformRoot}}/packages/db",
+    "@pand/logger": "link:{{platformRoot}}/packages/logger",
+    "@pand/service": "link:{{platformRoot}}/packages/service",
+    "@pand/telemetry": "link:{{platformRoot}}/packages/telemetry",
+    "drizzle-orm": "^0.39.3",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@pand/testing": "link:{{platformRoot}}/packages/testing",
+    "drizzle-kit": "^0.30.4"
+  }
+}

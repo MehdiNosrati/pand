@@ -1,0 +1,30 @@
+# AGENTS.md — {{displayName}} (`{{project}}`)
+
+This project is built on the **Pand** agent-native application platform.
+
+## Golden Rules for AI Agents
+
+1. **Always use generators first:**
+   - Add a backend microservice: `pand add service <name>`
+   - Add a data model + CRUD API + tests + client screens:
+     `pand add entity <service> <Entity> --fields "<dsl>" [--web] [--ios] [--android]`
+2. **Never hand-edit generated files or code markers:**
+   - Do not edit `packages/contracts/openapi.json`, `packages/sdk/src/schema.d.ts`, or `drizzle/meta/*`.
+   - Preserve all `// pand:*` marker comments (`// pand:schema-exports`, `// pand:route-imports`, `// pand:route-mounts`, `// pand:admin-meta`, `// pand:web-nav`, `// pand:ios-tabs`, `// pand:android-tabs`).
+3. **Keep contracts and migrations in sync:**
+   - Whenever you modify a Drizzle table or Hono OpenAPI route, run:
+     ```bash
+     pand db generate
+     pand sdk gen
+     ```
+4. **Verify before finishing:**
+   - Every task must pass `pand check` (Biome lint/format, TypeScript typecheck, OpenAPI/SDK drift check, and Vitest test suite).
+
+## Key Directories
+
+- `pand.config.ts` — Single source of truth for project services, ports, auth, and enabled apps.
+- `services/gateway/` — Public entry point (`/api/auth/*`, `/api/v1/<service>/*`, `/api/openapi.json`, `/api/admin/meta`).
+- `services/<service>/` — Microservice owning Postgres schema `<service>`, routes in `src/routes/`, Drizzle schema in `src/db/schema/`, and integration tests in `test/`.
+- `packages/contracts/` & `packages/sdk/` — Merged OpenAPI 3.1 contract and generated TypeScript client (`@{{project}}/sdk`).
+- `apps/web/`, `apps/admin/`, `apps/ios/`, `apps/android/` — Client applications.
+- `.agents/skills/` — Step-by-step runbooks for common workflows.

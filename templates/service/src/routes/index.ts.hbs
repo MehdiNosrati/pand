@@ -1,0 +1,9 @@
+import type { PandServiceApp } from "@pand/service";
+import type { {{pascalService}}DbInstance } from "../db/index.js";
+// pand:route-imports
+
+export function mountRoutes(app: PandServiceApp, getDb: () => {{pascalService}}DbInstance["db"]) {
+  void app;
+  void getDb;
+  // pand:route-mounts
+}

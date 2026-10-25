@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    ports:
+      - "${PAND_PG_PORT:-4032}:5432"
+    environment:
+      POSTGRES_USER: pand
+      POSTGRES_PASSWORD: pand
+      POSTGRES_DB: "${PAND_DB_NAME:-reference_dev}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pand"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+
+  valkey:
+    image: valkey/valkey:8-alpine
+    restart: unless-stopped
+    ports:
+      - "${PAND_VALKEY_PORT:-4079}:6379"
+
+  otel-lgtm:
+    image: grafana/otel-lgtm:latest
+    restart: unless-stopped
+    ports:
+      - "${PAND_GRAFANA_PORT:-4080}:3000"
+      - "${PAND_OTLP_PORT:-4018}:4318"

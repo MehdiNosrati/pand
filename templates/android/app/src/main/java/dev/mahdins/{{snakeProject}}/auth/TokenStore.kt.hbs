@@ -1,0 +1,17 @@
+package dev.mahdins.{{snakeProject}}.auth
+
+import android.content.Context
+
+class TokenStore(context: Context) {
+    private val prefs = context.getSharedPreferences("pand_auth", Context.MODE_PRIVATE)
+
+    fun saveToken(token: String) {
+        prefs.edit().putString("bearer_token", token).apply()
+    }
+
+    fun getToken(): String? = prefs.getString("bearer_token", null)
+
+    fun clearToken() {
+        prefs.edit().remove("bearer_token").apply()
+    }
+}
