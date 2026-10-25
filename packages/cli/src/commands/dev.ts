@@ -1,6 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
-import { loadPandConfig, resolveProjectPorts } from "@pand/config";
+import {
+  type PandConfig,
+  type ProjectPorts,
+  loadPandConfig,
+  resolveProjectPorts,
+} from "@pand/config";
 import chokidar from "chokidar";
 import { defineCommand } from "citty";
 import { consola } from "consola";
@@ -15,6 +20,53 @@ import {
 } from "../output.js";
 import { dbMigrateInternal, resolveDevDatabaseUrl } from "./db.js";
 import { sdkGenInternal } from "./sdk-gen.js";
+
+export interface AppSpawnSpec {
+  app: "web" | "admin";
+  cmd: string;
+  args: string[];
+  cwd: string;
+  env: Record<string, string>;
+  url: string;
+}
+
+export function buildAppDevSpawns(
+  config: PandConfig,
+  ports: ProjectPorts,
+  rootDir = "",
+): AppSpawnSpec[] {
+  const spawns: AppSpawnSpec[] = [];
+
+  if (config.apps?.web) {
+    spawns.push({
+      app: "web",
+      cmd: "pnpm",
+      args: ["exec", "vite", "--host", "localhost", "--port", String(ports.webPort)],
+      cwd: path.join(rootDir, "apps", "web"),
+      env: {
+        PORT: String(ports.webPort),
+        GATEWAY_PORT: String(ports.gatewayPort),
+      },
+      url: `http://localhost:${ports.webPort}`,
+    });
+  }
+
+  if (config.apps?.admin) {
+    spawns.push({
+      app: "admin",
+      cmd: "pnpm",
+      args: ["exec", "vite", "--host", "localhost", "--port", String(ports.adminPort)],
+      cwd: path.join(rootDir, "apps", "admin"),
+      env: {
+        PORT: String(ports.adminPort),
+        GATEWAY_PORT: String(ports.gatewayPort),
+      },
+      url: `http://localhost:${ports.adminPort}`,
+    });
+  }
+
+  return spawns;
+}
 
 export async function writeDevArtifacts(rootDir: string) {
   const { config } = await loadPandConfig(rootDir);
@@ -142,6 +194,27 @@ export const devCommand = defineCommand({
             stdio: "inherit",
           }),
         );
+      }
+
+      // Spawn web and admin apps if enabled
+      const appSpawns = buildAppDevSpawns(config, artifacts.ports, rootDir);
+      for (const app of appSpawns) {
+        if (fs.existsSync(app.cwd)) {
+          children.push(
+            execa(app.cmd, app.args, {
+              cwd: app.cwd,
+              env: { ...commonEnv, ...app.env },
+              stdio: "inherit",
+            }),
+          );
+        }
+      }
+
+      if (config.apps?.web && fs.existsSync(path.join(rootDir, "apps", "web"))) {
+        consola.info(`Web app running at http://localhost:${artifacts.ports.webPort}`);
+      }
+      if (config.apps?.admin && fs.existsSync(path.join(rootDir, "apps", "admin"))) {
+        consola.info(`Admin app running at http://localhost:${artifacts.ports.adminPort}`);
       }
 
       // Watch route files for OpenAPI / SDK regeneration

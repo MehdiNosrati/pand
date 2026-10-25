@@ -10,6 +10,7 @@ export {
 } from "./schema.js";
 
 export {
+  buildTrustedOrigins,
   createPandAuth,
   isAdminEmail,
   resolveRequestActor,

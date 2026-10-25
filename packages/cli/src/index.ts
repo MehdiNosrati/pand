@@ -76,7 +76,11 @@ export {
   dbSeedInternal,
   resolveDevDatabaseUrl,
 } from "./commands/db.js";
-export { writeDevArtifacts } from "./commands/dev.js";
+export {
+  buildAppDevSpawns,
+  writeDevArtifacts,
+  type AppSpawnSpec,
+} from "./commands/dev.js";
 export {
   newProjectInternal,
   scaffoldClientApp,

@@ -23,6 +23,7 @@ import {
   resolveCwd,
 } from "../output.js";
 import { addServiceInternal } from "./add-service.js";
+import { sdkGenInternal } from "./sdk-gen.js";
 
 export interface ScaffoldAppOptions {
   rootDir: string;
@@ -133,6 +134,7 @@ export async function newProjectInternal(options: NewProjectOptions) {
   if (!options.skipInstall) {
     await execa("git", ["init"], { cwd: projectDir });
     await execa("pnpm", ["install"], { cwd: projectDir });
+    await sdkGenInternal({ rootDir: projectDir }).catch(() => {});
     await execa("pnpm", ["biome", "check", "--write", "."], { cwd: projectDir }).catch(() => {});
   }
 

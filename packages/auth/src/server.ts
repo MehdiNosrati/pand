@@ -9,6 +9,7 @@ export interface CreatePandAuthOptions {
   config: PandConfig;
   secret?: string;
   baseURL?: string;
+  trustedOrigins?: string[];
 }
 
 export interface RequestActor {
@@ -27,6 +28,74 @@ export function isAdminEmail(email: string, config: PandConfig): boolean {
   return allAdmins.has(email.trim().toLowerCase());
 }
 
+export function buildTrustedOrigins(options: {
+  baseURL?: string;
+  trustedOrigins?: string[];
+  isProduction?: boolean;
+}): string[] {
+  const isProd = options.isProduction ?? process.env.NODE_ENV === "production";
+  const rawList: string[] = [];
+
+  if (options.trustedOrigins) {
+    rawList.push(...options.trustedOrigins);
+  }
+  if (process.env.PAND_PUBLIC_WEB_URL) {
+    rawList.push(process.env.PAND_PUBLIC_WEB_URL);
+  }
+  if (process.env.PAND_PUBLIC_ADMIN_URL) {
+    rawList.push(process.env.PAND_PUBLIC_ADMIN_URL);
+  }
+  if (process.env.PAND_TRUSTED_ORIGINS) {
+    const fromEnv = process.env.PAND_TRUSTED_ORIGINS.split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    rawList.push(...fromEnv);
+  }
+  if (options.baseURL) {
+    rawList.push(options.baseURL);
+  }
+
+  const origins = new Set<string>();
+
+  for (const item of rawList) {
+    if (!item || typeof item !== "string") continue;
+    const trimmed = item.trim();
+    if (!trimmed) continue;
+
+    // Never accept wildcard or arbitrary origins in production
+    if (isProd && (trimmed === "*" || trimmed.includes("*"))) {
+      continue;
+    }
+
+    let origin: string;
+    try {
+      origin = new URL(trimmed).origin;
+    } catch {
+      origin = trimmed.replace(/\/+$/, "");
+    }
+    if (!origin) continue;
+
+    if (isProd) {
+      if (origin.includes("*") || origin.includes("127.0.0.1")) {
+        continue;
+      }
+    }
+
+    origins.add(origin);
+
+    // In non-production only, also add the 127.0.0.1 version of every localhost origin in the list
+    if (!isProd) {
+      if (origin.includes("localhost")) {
+        origins.add(origin.replace("localhost", "127.0.0.1"));
+      } else if (origin.includes("127.0.0.1")) {
+        origins.add(origin.replace("127.0.0.1", "localhost"));
+      }
+    }
+  }
+
+  return Array.from(origins);
+}
+
 export interface PandAuthInstance {
   handler: (req: Request) => Promise<Response>;
   api: {
@@ -42,6 +111,10 @@ export function createPandAuth(options: CreatePandAuthOptions): PandAuthInstance
     process.env.BETTER_AUTH_SECRET ??
     "dev-better-auth-secret-must-be-at-least-32-bytes-long";
   const baseURL = options.baseURL ?? process.env.BETTER_AUTH_URL ?? "http://localhost:4001";
+  const trustedOrigins = buildTrustedOrigins({
+    baseURL,
+    trustedOrigins: options.trustedOrigins,
+  });
 
   const auth = betterAuth({
     database: drizzleAdapter(options.db as any, {
@@ -51,6 +124,10 @@ export function createPandAuth(options: CreatePandAuthOptions): PandAuthInstance
     secret,
     baseURL,
     basePath: "/api/auth",
+    trustedOrigins,
+    advanced: {
+      disableOriginCheck: false,
+    },
     emailAndPassword: {
       enabled: options.config.auth?.emailPassword ?? true,
     },
