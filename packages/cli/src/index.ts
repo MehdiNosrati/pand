@@ -69,11 +69,16 @@ export {
   addServiceInternal,
   type AddServiceInternalOptions,
 } from "./commands/add-service.js";
-export { checkProjectInternal } from "./commands/check.js";
+export {
+  checkMigrationDriftInternal,
+  checkProjectInternal,
+} from "./commands/check.js";
 export {
   dbGenerateInternal,
   dbMigrateInternal,
   dbSeedInternal,
+  ensureBaselineSnapshot,
+  parseSqlToSnapshot,
   resolveDevDatabaseUrl,
 } from "./commands/db.js";
 export {

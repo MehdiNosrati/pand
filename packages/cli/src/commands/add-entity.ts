@@ -128,7 +128,7 @@ export async function addEntityInternal(options: AddEntityOptions) {
   insertBeforeMarker(
     schemaIndexFile,
     "// pand:schema-exports",
-    `export { ${pluralCamel} } from "./${pluralKebab}.js";`,
+    `export { ${pluralCamel} } from "./${pluralKebab}";`,
   );
 
   const routesIndexFile = path.join(serviceDir, "src", "routes", "index.ts");

@@ -57,7 +57,215 @@ export async function resolveDevDatabaseUrl(rootDir: string): Promise<string> {
   return `postgres://pand:pand@localhost:${pgPort}/${dbName}`;
 }
 
-async function ensureServiceMigrationsFallback(
+export function getNodeOptionsWithTsx(): string {
+  const existing = process.env.NODE_OPTIONS ?? "";
+  if (existing.includes("--import tsx") || existing.includes("loader.mjs")) {
+    return existing;
+  }
+  return [existing, "--import tsx"].filter(Boolean).join(" ");
+}
+
+export function splitSqlColumns(body: string): string[] {
+  const statements: string[] = [];
+  let current = "";
+  let parenDepth = 0;
+  let inQuote = false;
+  let quoteChar = "";
+
+  for (let i = 0; i < body.length; i++) {
+    const ch = body[i];
+    if (inQuote) {
+      current += ch;
+      if (ch === quoteChar) {
+        inQuote = false;
+      }
+    } else if (ch === "'" || ch === '"') {
+      inQuote = true;
+      quoteChar = ch;
+      current += ch;
+    } else if (ch === "(") {
+      parenDepth++;
+      current += ch;
+    } else if (ch === ")") {
+      parenDepth--;
+      current += ch;
+    } else if (ch === "," && parenDepth === 0) {
+      if (current.trim()) statements.push(current.trim());
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) statements.push(current.trim());
+  return statements;
+}
+
+export function parseSqlToSnapshot(
+  sql: string,
+  defaultSchema = "public",
+  options: { id?: string; prevId?: string } = {},
+) {
+  const tables: Record<string, any> = {};
+  const tableRegex =
+    /CREATE TABLE(?:\s+IF NOT EXISTS)?\s+(?:(?:"([^"]+)"|([a-zA-Z0-9_]+))\.)?(?:"([^"]+)"|([a-zA-Z0-9_]+))\s*\(([\s\S]*?)\);/gi;
+  let match = tableRegex.exec(sql);
+  while (match !== null) {
+    const schema = match[1] || match[2] || defaultSchema;
+    const tableName = match[3] || match[4];
+    const body = match[5];
+    if (!tableName || !body) {
+      match = tableRegex.exec(sql);
+      continue;
+    }
+    const columns: Record<string, any> = {};
+    const pkCols = new Set<string>();
+
+    const statements = splitSqlColumns(body);
+
+    for (const stmt of statements) {
+      const pkMatch = stmt.match(/(?:CONSTRAINT\s+[\s\S]+?\s+)?PRIMARY KEY\s*\(([^)]+)\)/i);
+      if (pkMatch?.[1]) {
+        const cols = pkMatch[1].split(",").map((c) => c.trim().replace(/^"|"$/g, ""));
+        for (const c of cols) pkCols.add(c);
+      }
+    }
+
+    for (const stmt of statements) {
+      if (/^(?:CONSTRAINT|PRIMARY KEY|FOREIGN KEY|UNIQUE|CHECK|--)/i.test(stmt)) {
+        continue;
+      }
+      const colMatch = stmt.match(/^(?:"([^"]+)"|([a-zA-Z0-9_]+))\s+([^,]+)/);
+      if (!colMatch) continue;
+      const colName = colMatch[1] || colMatch[2];
+      const rest = colMatch[3]?.trim();
+      if (!colName || !rest) continue;
+
+      const isPk = /PRIMARY KEY/i.test(rest) || pkCols.has(colName);
+      const isNotNull = /NOT NULL/i.test(rest) || isPk;
+      let defaultVal: string | undefined;
+      const defaultMatch = rest.match(/DEFAULT\s+([^,]+?)(?:\s+NOT NULL|\s+PRIMARY KEY|$)/i);
+      if (defaultMatch?.[1]) {
+        defaultVal = defaultMatch[1].trim();
+        if (defaultVal.startsWith("'") && defaultVal.endsWith("'")) {
+          defaultVal = defaultVal.slice(1, -1);
+        }
+      }
+
+      const type = rest
+        .replace(/PRIMARY KEY/gi, "")
+        .replace(/NOT NULL/gi, "")
+        .replace(/DEFAULT\s+[^,]+/gi, "")
+        .trim();
+
+      columns[colName] = {
+        name: colName,
+        type: type.toLowerCase(),
+        primaryKey: isPk,
+        notNull: isNotNull,
+        ...(defaultVal !== undefined ? { default: defaultVal } : {}),
+      };
+    }
+
+    const key = schema ? `${schema}.${tableName}` : tableName;
+    tables[key] = {
+      name: tableName,
+      schema: schema || "",
+      columns,
+      indexes: {},
+      foreignKeys: {},
+      compositePrimaryKeys: {},
+      uniqueConstraints: {},
+      policies: {},
+      checkConstraints: {},
+      isRLSEnabled: false,
+    };
+    match = tableRegex.exec(sql);
+  }
+
+  return {
+    id: options.id || "00000000-0000-0000-0000-000000000001",
+    prevId: options.prevId || "00000000-0000-0000-0000-000000000000",
+    version: "7",
+    dialect: "postgresql",
+    tables,
+    enums: {},
+    schemas: {},
+    sequences: {},
+    roles: {},
+    policies: {},
+    views: {},
+    _meta: {
+      columns: {},
+      schemas: {},
+      tables: {},
+    },
+  };
+}
+
+export function ensureBaselineSnapshot(serviceDir: string, serviceName: string): boolean {
+  const drizzleDir = path.join(serviceDir, "drizzle");
+  const metaDir = path.join(drizzleDir, "meta");
+  const journalPath = path.join(metaDir, "_journal.json");
+  if (!fs.existsSync(journalPath)) return false;
+
+  let journal: any;
+  try {
+    journal = JSON.parse(fs.readFileSync(journalPath, "utf8"));
+  } catch {
+    return false;
+  }
+
+  if (!journal.entries || !Array.isArray(journal.entries)) return false;
+
+  let createdAny = false;
+  for (const entry of journal.entries) {
+    const idxStr = String(entry.idx).padStart(4, "0");
+    const snapshotPath = path.join(metaDir, `${idxStr}_snapshot.json`);
+    if (!fs.existsSync(snapshotPath)) {
+      const candidateFiles = [
+        path.join(drizzleDir, `${entry.tag}.sql`),
+        path.join(drizzleDir, `${idxStr}_init.sql`),
+        ...fs
+          .readdirSync(drizzleDir)
+          .filter((f) => f.startsWith(`${idxStr}_`) && f.endsWith(".sql"))
+          .map((f) => path.join(drizzleDir, f)),
+      ];
+      const sqlFile = candidateFiles.find((f) => fs.existsSync(f));
+      if (sqlFile) {
+        const sql = fs.readFileSync(sqlFile, "utf8");
+        const prevIdxStr = entry.idx > 0 ? String(entry.idx - 1).padStart(4, "0") : null;
+        const snapshot = parseSqlToSnapshot(sql, serviceName, {
+          id: `00000000-0000-0000-0000-${String(entry.idx + 1).padStart(12, "0")}`,
+          prevId: prevIdxStr
+            ? `00000000-0000-0000-0000-${String(entry.idx).padStart(12, "0")}`
+            : "00000000-0000-0000-0000-000000000000",
+        });
+        fs.writeFileSync(snapshotPath, `${JSON.stringify(snapshot, null, 2)}\n`, "utf8");
+        createdAny = true;
+      }
+    }
+  }
+  return createdAny;
+}
+
+export function applySafeIdempotentRewrites(serviceDir: string) {
+  const drizzleDir = path.join(serviceDir, "drizzle");
+  if (!fs.existsSync(drizzleDir)) return;
+
+  for (const file of fs.readdirSync(drizzleDir)) {
+    if (!file.endsWith(".sql")) continue;
+    const sqlPath = path.join(drizzleDir, file);
+    const origSql = fs.readFileSync(sqlPath, "utf8");
+    const idempotentSql = origSql
+      .replace(/CREATE SCHEMA(?!\s+IF NOT EXISTS)\s+"/g, 'CREATE SCHEMA IF NOT EXISTS "')
+      .replace(/CREATE TABLE(?!\s+IF NOT EXISTS)\s+"/g, 'CREATE TABLE IF NOT EXISTS "');
+    if (idempotentSql !== origSql) {
+      fs.writeFileSync(sqlPath, idempotentSql, "utf8");
+    }
+  }
+}
+
+export async function ensureServiceMigrationsFallback(
   serviceDir: string,
   serviceName: string,
 ): Promise<boolean> {
@@ -139,6 +347,12 @@ async function ensureServiceMigrationsFallback(
     )}\n`,
     "utf8",
   );
+  const snapshot = parseSqlToSnapshot(sqlContent, serviceName);
+  fs.writeFileSync(
+    path.join(drizzleDir, "meta", "0000_snapshot.json"),
+    `${JSON.stringify(snapshot, null, 2)}\n`,
+    "utf8",
+  );
   return true;
 }
 
@@ -164,40 +378,86 @@ export async function dbGenerateInternal(options: { rootDir: string; service?: s
   for (const svc of allTargets) {
     const svcDir = path.join(options.rootDir, "services", svc);
     if (!fs.existsSync(svcDir)) continue;
-    const journalPath = path.join(svcDir, "drizzle", "meta", "_journal.json");
+    const drizzleDir = path.join(svcDir, "drizzle");
+    const journalPath = path.join(drizzleDir, "meta", "_journal.json");
+    const schemaDir = path.join(svcDir, "src", "db", "schema");
+    const svcSchemaName = svc === "gateway" ? "auth" : svc;
+
+    // Upgrade path: if existing migrations exist but snapshot is missing, synthesize baseline snapshot first
+    ensureBaselineSnapshot(svcDir, svcSchemaName);
+
+    const hasMigrations =
+      fs.existsSync(journalPath) &&
+      (() => {
+        try {
+          const j = JSON.parse(fs.readFileSync(journalPath, "utf8"));
+          return Array.isArray(j.entries) && j.entries.length > 0;
+        } catch {
+          return false;
+        }
+      })();
+
+    let generateOutput = "";
+    let generateErrOutput = "";
 
     try {
-      await execa("pnpm", ["exec", "drizzle-kit", "generate"], { cwd: svcDir });
-    } catch {
-      // Fall back to deterministic table inspection if drizzle-kit CLI encounters an issue
-    }
+      const res = await execa("pnpm", ["exec", "drizzle-kit", "generate"], {
+        cwd: svcDir,
+        env: {
+          ...process.env,
+          NODE_OPTIONS: getNodeOptionsWithTsx(),
+        },
+        stdin: "ignore",
+      });
+      generateOutput = res.stdout ?? "";
+      generateErrOutput = res.stderr ?? "";
+    } catch (err: any) {
+      generateOutput = err.stdout ?? "";
+      generateErrOutput = err.stderr ?? "";
+      const combined = `${generateOutput} ${generateErrOutput} ${err.message ?? ""}`;
 
-    if (!fs.existsSync(journalPath)) {
-      await ensureServiceMigrationsFallback(svcDir, svc === "gateway" ? "auth" : svc);
-    } else {
-      // Also ensure any new tables are reflected if journal has 0 entries
-      const journal = JSON.parse(fs.readFileSync(journalPath, "utf8"));
-      if (!journal.entries || journal.entries.length === 0) {
-        await ensureServiceMigrationsFallback(svcDir, svc === "gateway" ? "auth" : svc);
+      if (
+        /created or renamed/i.test(combined) ||
+        /rename.*column/i.test(combined) ||
+        /rename.*table/i.test(combined) ||
+        /❯/.test(combined)
+      ) {
+        throw new Error(
+          `drizzle-kit requires confirmation for ambiguous schema changes in service '${svc}' (such as column/table renames or adding NOT NULL columns without defaults). Please provide a default value, make the column nullable, or use a custom migration.`,
+        );
       }
-    }
 
-    // Make any drizzle-kit generated SQL idempotent (CREATE SCHEMA IF NOT EXISTS / CREATE TABLE IF NOT EXISTS)
-    const drizzleDir = path.join(svcDir, "drizzle");
-    if (fs.existsSync(drizzleDir)) {
-      for (const file of fs.readdirSync(drizzleDir)) {
-        if (!file.endsWith(".sql")) continue;
-        const sqlPath = path.join(drizzleDir, file);
-        const origSql = fs.readFileSync(sqlPath, "utf8");
-        const idempotentSql = origSql
-          .replace(/CREATE SCHEMA "/g, 'CREATE SCHEMA IF NOT EXISTS "')
-          .replace(/CREATE TABLE "/g, 'CREATE TABLE IF NOT EXISTS "');
-        if (idempotentSql !== origSql) {
-          fs.writeFileSync(sqlPath, idempotentSql, "utf8");
+      // If fresh service with no migrations, try fallback
+      if (!hasMigrations && fs.existsSync(schemaDir)) {
+        const fallbackOk = await ensureServiceMigrationsFallback(svcDir, svcSchemaName);
+        if (fallbackOk) {
+          applySafeIdempotentRewrites(svcDir);
+          generated.push(svc);
+          continue;
         }
       }
+
+      const errMsg = err.stderr?.trim() || err.stdout?.trim() || err.message;
+      throw new Error(`Failed to generate migrations for service '${svc}': ${errMsg}`);
     }
 
+    const combinedOutput = `${generateOutput} ${generateErrOutput}`;
+    if (
+      /created or renamed/i.test(combinedOutput) ||
+      /rename.*column/i.test(combinedOutput) ||
+      /rename.*table/i.test(combinedOutput) ||
+      /❯/.test(combinedOutput)
+    ) {
+      throw new Error(
+        `drizzle-kit requires confirmation for ambiguous schema changes in service '${svc}' (such as column/table renames or adding NOT NULL columns without defaults). Please provide a default value, make the column nullable, or use a custom migration.`,
+      );
+    }
+
+    if (!fs.existsSync(journalPath) && fs.existsSync(schemaDir)) {
+      await ensureServiceMigrationsFallback(svcDir, svcSchemaName);
+    }
+
+    applySafeIdempotentRewrites(svcDir);
     generated.push(svc);
   }
 
