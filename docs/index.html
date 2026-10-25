@@ -554,6 +554,9 @@
       <a href="https://github.com/MehdiNosrati/pand" class="btn-icon" target="_blank" rel="noopener noreferrer">
         GitHub ↗
       </a>
+      <a href="https://github.com/MehdiNosrati/todo-pand" class="btn-icon" target="_blank" rel="noopener noreferrer">
+        Demo App ↗
+      </a>
     </div>
   </header>
 
@@ -564,6 +567,7 @@
         <ul class="nav-list">
           <li><a class="nav-link" href="#overview">Overview &amp; Philosophy</a></li>
           <li><a class="nav-link" href="#quickstart">60-Second Quickstart</a></li>
+          <li><a class="nav-link" href="#showcase">Demo App (Todo Pand)</a></li>
           <li><a class="nav-link" href="#architecture">Architecture &amp; Invariants</a></li>
           <li><a class="nav-link" href="#field-dsl">Field DSL Reference</a></li>
         </ul>
@@ -690,6 +694,36 @@ pand dev</code></pre>
         <div class="callout">
           <strong>Agent Mode (<code>--json</code>)</strong>
           <p>Every CLI command accepts <code>--json</code> and returns a deterministic JSON payload with <code>status</code>, <code>filesCreated</code>, <code>migrationsApplied</code>, or structured error diagnostics.</p>
+        </div>
+      </section>
+
+      <!-- DEMO SHOWCASE -->
+      <section id="showcase" class="doc-section">
+        <h2>🌟 Official Demo Application — Todo Pand</h2>
+        <p>Explore <a href="https://github.com/MehdiNosrati/todo-pand" target="_blank" rel="noopener noreferrer"><strong>Todo Pand (<code>todo-pand</code>)</strong></a>, a full-stack, multi-tenant task and project management workspace built from scratch on the Pand platform.</p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>Full-Stack Contract Wiring</h3>
+            <p>Drizzle PostgreSQL schemas, OpenAPI 3.1 microservice routes, and auto-generated TypeScript SDK clients with zero drift.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Multi-Tenant Row-Level Scoping</h3>
+            <p>Every project and task is strictly isolated by <code>ownerId</code> via gateway-injected internal identity JWTs (<code>c.get("actor")!.sub</code>).</p>
+          </div>
+          <div class="feature-card">
+            <h3>Guest Workspace &amp; Sync</h3>
+            <p>Seamless transition from anonymous browser <code>localStorage</code> to authenticated database accounts via <code>POST /todos/import-guest</code>.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Dynamic Admin Console</h3>
+            <p>Reactive entity CRUD and Better Auth administrative user management powered by <code>@pand/admin-ui</code>.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-emerald" style="margin-top: 1.25rem;">
+          <strong>Explore the Source Code</strong>
+          <p>Clone, inspect, and run the complete demo app on GitHub: <a href="https://github.com/MehdiNosrati/todo-pand" target="_blank" rel="noopener noreferrer"><strong>github.com/MehdiNosrati/todo-pand →</strong></a></p>
         </div>
       </section>
 

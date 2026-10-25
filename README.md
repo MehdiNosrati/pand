@@ -42,6 +42,19 @@ Every CLI command supports `--json` for structured machine-readable output desig
 
 ---
 
+## 🌟 Reference & Showcase Applications
+
+Explore real-world applications built with the Pand platform:
+
+- **[Todo Pand (`todo-pand`)](https://github.com/MehdiNosrati/todo-pand)** — The official full-stack reference showcase application.
+  - **Full-Stack Monorepo**: PostgreSQL (Drizzle) + Hono OpenAPI 3.1 microservice + API Gateway + generated typed client SDK (`@todo-pand/sdk`) + React 19 / Tailwind CSS v4 consumer web app + reactive Admin console.
+  - **Multi-Tenant Scoping**: Complete user-level row isolation via `ownerId` and short-lived internal identity JWTs (`c.get("actor")!.sub`).
+  - **Guest-to-Account Sync**: Instant zero-login productivity with browser `localStorage` workspace fallback, automatic migration (`POST /todos/import-guest`), and "account wins" conflict resolution.
+  - **Dual View Modes & UI**: Kanban boards, list tables, custom keyboard-accessible dropdown select controls, priority tracking (`Urgent`, `High`, `Medium`, `Low`), search, and due date filters.
+  - **Admin Operations**: Dynamic CRUD tables and Better Auth administrative user management (roles, bans, and audits) powered by `@pand/admin-ui`.
+
+---
+
 ## 🏗️ Architecture at a Glance
 
 ```

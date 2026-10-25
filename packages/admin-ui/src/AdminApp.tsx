@@ -49,8 +49,9 @@ export function DynamicEntityCrud({ meta }: DynamicEntityCrudProps) {
     try {
       const qs = search ? `?search=${encodeURIComponent(search)}` : "";
       const res = await fetch(`${meta.basePath}${qs}`);
-      const json = (await res.json()) as { data?: Array<Record<string, any>> };
-      setItems(json.data ?? []);
+      const json = (await res.json()) as any;
+      const list = json?.items ?? json?.data ?? (Array.isArray(json) ? json : []);
+      setItems(list);
     } catch {
       setItems([]);
     }
@@ -63,7 +64,7 @@ export function DynamicEntityCrud({ meta }: DynamicEntityCrudProps) {
   const openCreate = () => {
     const initial: Record<string, any> = {};
     for (const f of meta.fields) {
-      if (f.name === "id" || f.name === "createdAt" || f.name === "updatedAt") continue;
+      if (f.name === "id" || f.name === "createdAt" || f.name === "updatedAt" || (f as any).readOnly) continue;
       initial[f.name] = f.type === "boolean" ? false : (f.enumValues?.[0] ?? "");
     }
     setFormState(initial);
@@ -103,7 +104,7 @@ export function DynamicEntityCrud({ meta }: DynamicEntityCrudProps) {
   };
 
   const editableFields = meta.fields.filter(
-    (f) => f.name !== "id" && f.name !== "createdAt" && f.name !== "updatedAt",
+    (f) => f.name !== "id" && f.name !== "createdAt" && f.name !== "updatedAt" && !(f as any).readOnly,
   );
 
   return (
@@ -297,6 +298,7 @@ export function AdminApp(props: AdminAppProps) {
     initialEntities?.[0] ? `${initialEntities[0].service}.${initialEntities[0].entity}` : null,
   );
   const [usersList, setUsersList] = useState<Array<Record<string, any>>>([]);
+  const [adminToast, setAdminToast] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState<string | null>(null);
@@ -316,7 +318,14 @@ export function AdminApp(props: AdminAppProps) {
     fetch("/api/admin/meta")
       .then((r) => r.json())
       .then((res: any) => {
-        const list = (res?.data?.entities ?? []) as AdminEntityMeta[];
+        const raw = Array.isArray(res)
+          ? res
+          : (res?.data?.entities ?? res?.entities ?? res?.data ?? []);
+        const list = raw.map((e: any) => ({
+          ...e,
+          pluralTitle: e.pluralTitle || (e.entity.endsWith("s") ? e.entity : `${e.entity}s`),
+          searchableFields: e.searchableFields || (e.displayField ? [e.displayField] : ["id"]),
+        })) as AdminEntityMeta[];
         setEntities(list);
         if (list[0]) {
           setSelectedEntityKey(`${list[0].service}.${list[0].entity}`);
@@ -333,6 +342,84 @@ export function AdminApp(props: AdminAppProps) {
       })
       .catch(() => {});
   }, [initialEntities]);
+
+  const loadUsers = async () => {
+    try {
+      if ((authClient as any).admin?.listUsers) {
+        const res = await (authClient as any).admin.listUsers({ query: { limit: 100 } });
+        const list = res?.data?.users ?? res?.data ?? res?.users ?? [];
+        if (Array.isArray(list)) {
+          setUsersList(list);
+          return;
+        }
+      }
+      const r = await fetch("/api/auth/admin/list-users?limit=100");
+      if (r.ok) {
+        const json = await r.json();
+        const list = json?.users ?? json?.data?.users ?? (Array.isArray(json) ? json : []);
+        setUsersList(list);
+      }
+    } catch {
+      setUsersList([]);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "users") {
+      loadUsers();
+    }
+  }, [activeTab]);
+
+  const handleToggleRole = async (targetUser: Record<string, any>) => {
+    const newRole = targetUser.role === "admin" ? "user" : "admin";
+    try {
+      if ((authClient as any).admin?.setRole) {
+        await (authClient as any).admin.setRole({ userId: targetUser.id, role: newRole });
+      } else {
+        await fetch("/api/auth/admin/set-role", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ userId: targetUser.id, role: newRole }),
+        });
+      }
+      setAdminToast(`Updated role for ${targetUser.email} to ${newRole}`);
+      await loadUsers();
+    } catch {
+      setAdminToast("Failed to update role");
+    }
+  };
+
+  const handleToggleBan = async (targetUser: Record<string, any>) => {
+    const isBanned = Boolean(targetUser.banned);
+    try {
+      if (isBanned) {
+        if ((authClient as any).admin?.unbanUser) {
+          await (authClient as any).admin.unbanUser({ userId: targetUser.id });
+        } else {
+          await fetch("/api/auth/admin/unban-user", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ userId: targetUser.id }),
+          });
+        }
+        setAdminToast(`Unbanned ${targetUser.email}`);
+      } else {
+        if ((authClient as any).admin?.banUser) {
+          await (authClient as any).admin.banUser({ userId: targetUser.id });
+        } else {
+          await fetch("/api/auth/admin/ban-user", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ userId: targetUser.id }),
+          });
+        }
+        setAdminToast(`Banned ${targetUser.email}`);
+      }
+      await loadUsers();
+    } catch {
+      setAdminToast("Failed to update ban status");
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -464,13 +551,77 @@ export function AdminApp(props: AdminAppProps) {
         {activeTab === "entities" && selectedEntity ? (
           <DynamicEntityCrud meta={selectedEntity} />
         ) : activeTab === "users" ? (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-slate-900">Users & Auth</h2>
-            <Card>
-              <p className="text-sm text-slate-600">
-                Better Auth Admin User Management ({usersList.length} loaded)
-              </p>
-            </Card>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Users & Auth</h2>
+                <p className="text-xs text-slate-500">
+                  Better Auth User Management ({usersList.length} users registered)
+                </p>
+              </div>
+              <Button variant="secondary" size="sm" onClick={loadUsers}>
+                Refresh Users
+              </Button>
+            </div>
+
+            {usersList.length === 0 ? (
+              <Card className="p-6 text-center text-slate-500">
+                No users loaded or failed to fetch users list.
+              </Card>
+            ) : (
+              <Table>
+                <thead className="border-b border-slate-200 bg-slate-50">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold text-slate-700">User</th>
+                    <th className="px-4 py-3 font-semibold text-slate-700">Role</th>
+                    <th className="px-4 py-3 font-semibold text-slate-700">Status</th>
+                    <th className="px-4 py-3 font-semibold text-slate-700">Created</th>
+                    <th className="px-4 py-3 text-right font-semibold text-slate-700">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {usersList.map((u) => (
+                    <tr key={u.id} className="hover:bg-slate-50">
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-slate-900">{u.name || "No name"}</div>
+                        <div className="text-xs text-slate-500">{u.email}</div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge variant={u.role === "admin" ? "warning" : "default"}>
+                          {u.role ?? "user"}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge variant={u.banned ? "danger" : "success"}>
+                          {u.banned ? "Banned" : "Active"}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-slate-500">
+                        {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "—"}
+                      </td>
+                      <td className="space-x-2 px-4 py-3 text-right">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleToggleRole(u)}
+                        >
+                          {u.role === "admin" ? "Demote to User" : "Make Admin"}
+                        </Button>
+                        <Button
+                          variant={u.banned ? "secondary" : "danger"}
+                          size="sm"
+                          onClick={() => handleToggleBan(u)}
+                        >
+                          {u.banned ? "Unban" : "Ban"}
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            )}
+
+            <Toast message={adminToast} variant="success" onDismiss={() => setAdminToast(null)} />
           </div>
         ) : activeTab === "observability" ? (
           <div className="space-y-4">
