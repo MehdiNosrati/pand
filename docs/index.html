@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- MANDATORY: Declare support for both light and dark themes -->
+  <meta name="color-scheme" content="light dark">
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("color-scheme");
+        if (stored === "light" || stored === "dark") {
+          document.querySelector('meta[name="color-scheme"]').content = stored;
+        }
+      } catch {}
+    })();
+  </script>
+  <title>Pand Documentation — Agent-Native Application Platform</title>
+  <meta name="description" content="Official documentation, Getting Started guide, CLI reference, Field DSL, and Package API Reference for Pand — the agent-native full-stack and mobile platform.">
+  <style>
+    /* MANDATORY: Apply color-scheme to :root or html for viewport-wide theming */
+    :root {
+      --bg-canvas-light: #f8fafc;
+      --bg-canvas-dark: #090d16;
+      --bg-surface-light: #ffffff;
+      --bg-surface-dark: #111827;
+      --bg-elevated-light: #f1f5f9;
+      --bg-elevated-dark: #1e293b;
+      --border-subtle-light: #e2e8f0;
+      --border-subtle-dark: #1f2937;
+      --border-strong-light: #cbd5e1;
+      --border-strong-dark: #334155;
+      --text-primary-light: #0f172a;
+      --text-primary-dark: #f8fafc;
+      --text-secondary-light: #475569;
+      --text-secondary-dark: #94a3b8;
+      --text-muted-light: #64748b;
+      --text-muted-dark: #64748b;
+      --brand-light: #4f46e5;
+      --brand-dark: #818cf8;
+      --brand-soft-light: #eef2ff;
+      --brand-soft-dark: rgba(99, 102, 241, 0.14);
+      --emerald-light: #059669;
+      --emerald-dark: #34d399;
+      --amber-light: #d97706;
+      --amber-dark: #fbbf24;
+
+      --bg-canvas: light-dark(var(--bg-canvas-light), var(--bg-canvas-dark));
+      --bg-surface: light-dark(var(--bg-surface-light), var(--bg-surface-dark));
+      --bg-elevated: light-dark(var(--bg-elevated-light), var(--bg-elevated-dark));
+      --border-subtle: light-dark(var(--border-subtle-light), var(--border-subtle-dark));
+      --border-strong: light-dark(var(--border-strong-light), var(--border-strong-dark));
+      --text-primary: light-dark(var(--text-primary-light), var(--text-primary-dark));
+      --text-secondary: light-dark(var(--text-secondary-light), var(--text-secondary-dark));
+      --text-muted: light-dark(var(--text-muted-light), var(--text-muted-dark));
+      --brand: light-dark(var(--brand-light), var(--brand-dark));
+      --brand-soft: light-dark(var(--brand-soft-light), var(--brand-soft-dark));
+      --emerald: light-dark(var(--emerald-light), var(--emerald-dark));
+      --amber: light-dark(var(--amber-light), var(--amber-dark));
+
+      --scrollbar-thumb: light-dark(#cbd5e1, #334155);
+      --scrollbar-track: light-dark(#f1f5f9, #0f172a);
+      --accent-color: var(--brand);
+
+      /* MANDATORY: Automatically adapt native UI to user system preferences */
+      color-scheme: light dark;
+      accent-color: var(--accent-color);
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+
+      &:has(> head > meta[name="color-scheme"][content="light"]) {
+        color-scheme: light;
+      }
+      &:has(> head > meta[name="color-scheme"][content="dark"]) {
+        color-scheme: dark;
+      }
+    }
+
+    @supports not (scrollbar-color: auto) {
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb);
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--scrollbar-track);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+    }
+
+    /* Top Header */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .version-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background-color: var(--brand-soft);
+      color: var(--brand);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .search-input {
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-strong);
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      width: 240px;
+    }
+
+    .search-input:focus {
+      outline: 2px solid var(--brand);
+      outline-offset: 1px;
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-strong);
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-icon:hover {
+      background-color: var(--bg-elevated);
+    }
+
+    /* Layout Grid */
+    .layout {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: calc(100vh - 64px);
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+      padding: 1.5rem 1.25rem 3rem;
+      border-right: 1px solid var(--border-subtle);
+      background-color: var(--bg-surface);
+    }
+
+    .nav-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-group-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 0 0 0.5rem 0.5rem;
+    }
+
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 0.4rem 0.65rem;
+      border-radius: 6px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background-color 0.12s ease, color 0.12s ease;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background-color: var(--brand-soft);
+      color: var(--brand);
+    }
+
+    /* Main Content */
+    .content {
+      padding: 2.5rem 3.5rem 5rem;
+      max-width: 1020px;
+    }
+
+    /* Hero Banner */
+    .hero {
+      padding: 2.25rem;
+      border-radius: 16px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 2.5rem;
+      box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background-color: var(--brand-soft);
+      color: var(--brand);
+    }
+
+    .badge-emerald {
+      background-color: rgba(16, 185, 129, 0.12);
+      color: var(--emerald);
+    }
+
+    .hero h1 {
+      font-size: 2.4rem;
+      line-height: 1.18;
+      letter-spacing: -0.03em;
+      margin: 0 0 0.85rem;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin: 0 0 1.5rem;
+      max-width: 760px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .feature-card {
+      padding: 1rem 1.15rem;
+      border-radius: 10px;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .feature-card h3 {
+      margin: 0 0 0.35rem;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .feature-card p {
+      margin: 0;
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+    }
+
+    /* Sections */
+    .doc-section {
+      margin-bottom: 3.5rem;
+      scroll-margin-top: 84px;
+    }
+
+    /* DO ONLY apply this class to items OUTSIDE the initial layout viewport */
+    .doc-section-deferred {
+      /* MANDATORY: Skips rendering calculations when off-screen */
+      content-visibility: auto;
+      /* Mandatory: Provide an estimated size to prevent layout shifts */
+      contain-intrinsic-size: auto none auto 600px;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+      letter-spacing: -0.02em;
+      margin: 0 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      margin: 1.75rem 0 0.65rem;
+      color: var(--text-primary);
+    }
+
+    h4 {
+      font-size: 1rem;
+      margin: 1.25rem 0 0.4rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin: 0 0 1rem;
+      color: var(--text-secondary);
+    }
+
+    /* Code blocks always dark-themed for contrast */
+    pre, code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    :not(pre) > code {
+      font-size: 0.85em;
+      padding: 0.15rem 0.4rem;
+      border-radius: 5px;
+      background-color: var(--bg-elevated);
+      color: var(--brand);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .code-wrapper {
+      position: relative;
+      margin: 0.85rem 0 1.4rem;
+    }
+
+    pre {
+      color-scheme: dark;
+      /* Mandatory: any inherited color properties must be set again, even if to the same design tokens */
+      accent-color: var(--accent-color);
+      margin: 0;
+      padding: 1.15rem 1.25rem;
+      border-radius: 10px;
+      background-color: #0b1120;
+      color: #e2e8f0;
+      border: 1px solid #1e293b;
+      overflow-x: auto;
+      font-size: 0.86rem;
+      line-height: 1.6;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background-color: #1e293b;
+      color: #cbd5e1;
+      font-size: 0.74rem;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover {
+      background-color: #334155;
+      color: #ffffff;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1rem 0 1.5rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      background-color: var(--bg-surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: top;
+    }
+
+    th {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Callouts */
+    .callout {
+      padding: 1rem 1.2rem;
+      border-radius: 10px;
+      border-left: 4px solid var(--brand);
+      background-color: var(--brand-soft);
+      margin: 1.25rem 0;
+    }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: var(--text-primary);
+    }
+
+    .callout p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    /* Package API Card */
+    .api-card {
+      padding: 1.35rem 1.5rem;
+      border-radius: 12px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 1.5rem;
+    }
+
+    .api-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .api-card-header h3 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .content {
+        padding: 1.5rem;
+      }
+      .search-input {
+        width: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="#overview" class="brand">
+      <span class="brand-logo">P</span>
+      <span>Pand Platform</span>
+      <span class="version-pill">v0.1.0</span>
+    </a>
+    <div class="topbar-actions">
+      <input
+        type="search"
+        id="doc-search"
+        class="search-input"
+        placeholder="Filter docs (e.g. defineEntity)..."
+        aria-label="Filter documentation sections"
+      >
+      <button type="button" id="theme-toggle" class="btn-icon" aria-label="Toggle color scheme">
+        <span id="theme-label">Theme</span>
+      </button>
+      <a href="https://github.com/MehdiNosrati/pand" class="btn-icon" target="_blank" rel="noopener noreferrer">
+        GitHub ↗
+      </a>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Documentation Navigation">
+      <div class="nav-group">
+        <div class="nav-group-title">Getting Started</div>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#overview">Overview &amp; Philosophy</a></li>
+          <li><a class="nav-link" href="#quickstart">60-Second Quickstart</a></li>
+          <li><a class="nav-link" href="#architecture">Architecture &amp; Invariants</a></li>
+          <li><a class="nav-link" href="#field-dsl">Field DSL Reference</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">CLI Reference</div>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#cli-scaffolding">Project &amp; Entity Scaffolding</a></li>
+          <li><a class="nav-link" href="#cli-db-sdk">Database, SDK &amp; Check</a></li>
+          <li><a class="nav-link" href="#cli-ops">Box, Deploy, Backups &amp; Ops</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Core Packages API</div>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#pkg-config">@pand/config</a></li>
+          <li><a class="nav-link" href="#pkg-service">@pand/service</a></li>
+          <li><a class="nav-link" href="#pkg-gateway">@pand/gateway</a></li>
+          <li><a class="nav-link" href="#pkg-db">@pand/db</a></li>
+          <li><a class="nav-link" href="#pkg-auth">@pand/auth</a></li>
+          <li><a class="nav-link" href="#pkg-sdk-gen">@pand/sdk-gen</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">UI &amp; Mobile SDKs</div>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#pkg-ui">@pand/ui &amp; @pand/admin-ui</a></li>
+          <li><a class="nav-link" href="#mobile-sdks">iOS (SwiftUI) &amp; Android (Compose)</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Platform Services</div>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#pkg-events">@pand/events (BullMQ)</a></li>
+          <li><a class="nav-link" href="#pkg-storage">@pand/storage (S3 / R2)</a></li>
+          <li><a class="nav-link" href="#pkg-push">@pand/push (Expo / APNs / FCM)</a></li>
+          <li><a class="nav-link" href="#pkg-analytics">@pand/analytics</a></li>
+          <li><a class="nav-link" href="#pkg-observability">@pand/logger &amp; @pand/telemetry</a></li>
+          <li><a class="nav-link" href="#pkg-testing">@pand/testing</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">AI Agents &amp; Infra</div>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#pkg-mcp">@pand/mcp (13 Agent Tools)</a></li>
+          <li><a class="nav-link" href="#box-infra">Single-Box Infra &amp; Monitoring</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="content">
+      <!-- HERO / OVERVIEW (Above the fold - not deferred) -->
+      <section id="overview" class="doc-section">
+        <div class="hero">
+          <div class="hero-badges">
+            <span class="badge">Agent-Native Platform</span>
+            <span class="badge badge-emerald">34/34 Verified Tasks</span>
+            <span class="badge">Web • Admin • iOS • Android</span>
+          </div>
+          <h1>Build Full-Stack &amp; Native Mobile Apps at Agent Speed</h1>
+          <p>
+            <strong>Pand</strong> is an end-to-end application platform engineered for both human developers and autonomous AI agents. Define an entity once—Pand generates your PostgreSQL schema, OpenAPI 3.1 microservice routes, gateway wiring, typed TypeScript/Swift/Kotlin SDKs, Next.js pages, SwiftUI screens, and Jetpack Compose views.
+          </p>
+          <div class="feature-grid">
+            <div class="feature-card">
+              <h3>Single Source of Truth</h3>
+              <p>Drizzle PostgreSQL tables → Zod schemas → OpenAPI 3.1 → TS, Swift &amp; Kotlin SDKs with zero manual glue.</p>
+            </div>
+            <div class="feature-card">
+              <h3>Deterministic Architecture</h3>
+              <p>FNV-1a port hashing, per-service PG schemas, and HS256 gateway identity JWTs prevent integration drift.</p>
+            </div>
+            <div class="feature-card">
+              <h3>13 Built-In MCP Tools</h3>
+              <p>First-class Model Context Protocol server with destructive-operation guardrails and structured JSON outputs.</p>
+            </div>
+            <div class="feature-card">
+              <h3>Single-Box Production</h3>
+              <p>Deploy to any Ubuntu VPS with Caddy auto-TLS, Restic S3 backups, Prometheus, Loki, Tempo &amp; Grafana.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUICKSTART (Above the fold / primary entry) -->
+      <section id="quickstart" class="doc-section">
+        <h2>⚡ 60-Second Quickstart</h2>
+        <p>Install the workspace or run the <code>pand</code> CLI directly to scaffold a complete multi-service, multi-platform application:</p>
+
+        <div class="code-wrapper">
+          <button class="copy-btn" type="button" data-copy>Copy</button>
+          <pre><code># 1. Create a new Pand project with Web, Admin, iOS, and Android apps
+pand new acme-cloud --web --admin --ios --android
+cd acme-cloud
+
+# 2. Add a microservice (automatically assigned deterministic port)
+pand add service billing
+
+# 3. Add a full-stack entity across DB, Service, SDK, Web, iOS, and Android
+pand add entity subscription \
+  --service billing \
+  --fields "organizationId:uuid,plan:enum(free|pro|enterprise)=free,seats:int=1,active:boolean=true,renewsAt:datetime?" \
+  --web --ios --android
+
+# 4. Generate and apply SQL migrations (isolated in the "billing" PG schema)
+pand db generate
+pand db migrate
+
+# 5. Generate TypeScript, Swift, and Kotlin SDKs from merged OpenAPI specs
+pand sdk gen
+
+# 6. Run the 5-stage verification pipeline
+pand check
+
+# 7. Start local dev stack (Postgres, Redis, MinIO, Services, Gateway, Web)
+pand dev</code></pre>
+        </div>
+
+        <div class="callout">
+          <strong>Agent Mode (<code>--json</code>)</strong>
+          <p>Every CLI command accepts <code>--json</code> and returns a deterministic JSON payload with <code>status</code>, <code>filesCreated</code>, <code>migrationsApplied</code>, or structured error diagnostics.</p>
+        </div>
+      </section>
+
+      <!-- ARCHITECTURE -->
+      <section id="architecture" class="doc-section doc-section-deferred">
+        <h2>🏗️ Architecture &amp; Core Invariants</h2>
+        <p>Pand enforces five strict architectural contracts across all generated services and packages so neither humans nor AI agents can introduce configuration drift.</p>
+
+        <h3>1. Deterministic Port Allocation</h3>
+        <p>Services never hardcode port numbers. Every service name is hashed using 32-bit FNV-1a into one of 50 collision-checked slots in <code>4000..8900</code>:</p>
+        <div class="code-wrapper">
+          <button class="copy-btn" type="button" data-copy>Copy</button>
+          <pre><code>// Port formula in @pand/config:
+// slot = fnv1a32(serviceName) % 50
+// port = 4000 + slot * 100
+import { resolveServicePort, allocateServicePorts } from "@pand/config";
+
+const corePort = resolveServicePort("core");       // e.g. 6300
+const billingPort = resolveServicePort("billing"); // e.g. 4700
+// Fixed platform ports:
+// Gateway: 3000 | Web: 3001 | Admin: 3002 | Postgres: 5432 | Redis: 6379</code></pre>
+        </div>
+
+        <h3>2. Gateway Routing &amp; Internal Identity JWT</h3>
+        <p>Clients only talk to <code>@pand/gateway</code> on port <code>3000</code>. The gateway authenticates cookies, bearer tokens, or API keys, enforces sliding-window rate limits, and forwards requests to <code>/api/v1/&lt;service&gt;/*</code> with a short-lived (60s TTL) HS256-signed <code>x-pand-identity</code> JWT:</p>
+        <div class="code-wrapper">
+          <button class="copy-btn" type="button" data-copy>Copy</button>
+          <pre><code>// Decoded x-pand-identity JWT payload verified by @pand/service:
+interface PandIdentityPayload {
+  sub: string;       // Authenticated user ID
+  orgId?: string;    // Active organization / tenant ID
+  roles: string[];   // Assigned RBAC roles
+  scopes: string[];  // Granted API key or OAuth scopes
+  iat: number;
+  exp: number;       // iat + 60 seconds
+}</code></pre>
+        </div>
+
+        <h3>3. Per-Service PostgreSQL Schema Isolation</h3>
+        <p>All microservices share a single PostgreSQL cluster in development and single-box production, but each service is strictly isolated inside its own PostgreSQL schema (<code>pgSchema(serviceName)</code>) and tracks migrations in <code>__drizzle_migrations_&lt;service&gt;</code>. Cross-schema SQL joins are forbidden by convention and linted via <code>pand check</code>.</p>
+
+        <h3>4. Standard Error Envelope</h3>
+        <p>All services and the gateway return errors in a single canonical format:</p>
+        <div class="code-wrapper">
+          <button class="copy-btn" type="button" data-copy>Copy</button>
+          <pre><code>{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request payload",
+    "details": { "fieldErrors": { "email": ["Invalid email"] } },
+    "requestId": "req_01J9Z8K2M4X8P"
+  }
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- FIELD DSL -->
+      <section id="field-dsl" class="doc-section doc-section-deferred">
+        <h2>🧬 Field DSL Reference</h2>
+        <p>When running <code>pand add entity &lt;name&gt; --fields "..."</code> or invoking the MCP <code>pand_add_entity</code> tool, Pand parses a concise field DSL and generates Drizzle columns, Zod validators, OpenAPI schemas, and native UI inputs.</p>
+
+        <div class=" code-wrapper">
+          <button class="copy-btn" type="button" data-copy>Copy</button>
+          <pre><code># Syntax: name:type[?][!][=default]
+#   ? = nullable / optional
+#   ! = unique constraint
+#   =val = default value
+--fields "sku:string!,title:string,priceCents:int=0,status:enum(draft|active|archived)=draft,metadata:json?,publishedAt:datetime?"</code></pre>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>DSL Type</th>
+                <th>Drizzle Column (Postgres)</th>
+                <th>Zod Schema</th>
+                <th>TypeScript</th>
+                <th>Swift (iOS)</th>
+                <th>Kotlin (Android)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>string</code></td>
+                <td><code>varchar({ length: 255 })</code></td>
+                <td><code>z.string()</code></td>
+                <td><code>string</code></td>
+                <td><code>String</code></td>
+                <td><code>String</code></td>
+              </tr>
+              <tr>
+                <td><code>text</code></td>
+                <td><code>text()</code></td>
+                <td><code>z.string()</code></td>
+                <td><code>string</code></td>
+                <td><code>String</code></td>
+                <td><code>String</code></td>
+              </tr>
+              <tr>
+                <td><code>int</code></td>
+                <td><code>integer()</code></td>
+                <td><code>z.number().int()</code></td>
+                <td><code>number</code></td>
+                <td><code>Int</code></td>
+                <td><code>Int</code></td>
+              </tr>
+              <tr>
+                <td><code>float</code></td>
+                <td><code>doublePrecision()</code></td>
+                <td><code>z.number()</code></td>
+                <td><code>number</code></td>
+                <td><code>Double</code></td>
+                <td><code>Double</code></td>
+              </tr>
+              <tr>
+                <td><code>boolean</code></td>
+                <td><code>boolean()</code></td>
+                <td><code>z.boolean()</code></td>
+                <td><code>boolean</code></td>
+                <td><code>Bool</code></td>
+                <td><code>Boolean</code></td>
+              </tr>
+              <tr>
+                <td><code>datetime</code></td>
+                <td><code>timestamp({ withTimezone: true })</code></td>
+                <td><code>z.string().datetime()</code></td>
+                <td><code>string</code></td>
+                <td><code>String</code></td>
+                <td><code>String</code></td>
+              </tr>
+              <tr>
+                <td><code>uuid</code></td>
+                <td><code>uuid()</code></td>
+                <td><code>z.string().uuid()</code></td>
+                <td><code>string</code></td>
+                <td><code>String</code></td>
+                <td><code>String</code></td>
+              </tr>
+              <tr>
+                <td><code>json</code></td>
+                <td><code>jsonb()</code></td>
+                <td><code>z.record(z.unknown())</code></td>
+                <td><code>Record&lt;string, unknown&gt;</code></td>
+                <td><code>[String: AnyCodable]</code></td>
+                <td><code>Map&lt;String, Any?&gt;</code></td>
+              </tr>
+              <tr>
+                <td><code>enum(a|b|c)</code></td>
+                <td><code>varchar({ length: 64 })</code></td>
+                <td><code>z.enum(["a", "b", "c"])</code></td>
+                <td><code>"a" | "b" | "c"</code></td>
+                <td><code>enum { case a, b, c }</code></td>
+                <td><code>enum class { A, B, C }</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Every table automatically includes <code>standardColumns()</code>: <code>id</code> (UUIDv4 primary key), <code>createdAt</code>, and <code>updatedAt</code>.</p>
+      </section>
+
+      <!-- CLI REFERENCE -->
+      <section id="cli-scaffolding" class="doc-section doc-section-deferred">
+        <h2>⌨️ CLI Reference — Scaffolding, DB &amp; SDK</h2>
+        <p>The <code>@pand/cli</code> binary (<code>pand</code>) orchestrates the full lifecycle of a Pand workspace. Pass <code>--json</code> to any command for structured JSON output.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>Flags</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>pand new &lt;name&gt;</code></td>
+                <td><code>--web</code> <code>--admin</code> <code>--ios</code> <code>--android</code> <code>--box</code></td>
+                <td>Scaffolds a complete Pand monorepo with <code>pand.config.ts</code>, <code>services/core</code>, <code>packages/sdk</code>, <code>AGENTS.md</code>, and <code>.agents/skills/*</code>.</td>
+              </tr>
+              <tr>
+                <td><code>pand add service &lt;name&gt;</code></td>
+                <td><code>--json</code></td>
+                <td>Creates <code>services/&lt;name&gt;</code> with its own PG schema, health/OpenAPI endpoints, Vitest suite, and registers it in <code>pand.config.ts</code>.</td>
+              </tr>
+              <tr>
+                <td><code>pand add entity &lt;name&gt;</code></td>
+                <td><code>--service &lt;svc&gt;</code> <code>--fields &lt;dsl&gt;</code> <code>--web</code> <code>--ios</code> <code>--android</code></td>
+                <td>Generates Drizzle schema, CRUD routes, integration tests, and optional Next.js, SwiftUI, and Jetpack Compose screens.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="cli-db-sdk">Database, SDK &amp; Verification Commands</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>Flags</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>pand db generate</code></td>
+                <td><code>--service &lt;svc&gt;</code></td>
+                <td>Generates idempotent SQL migrations (<code>CREATE SCHEMA IF NOT EXISTS</code> / <code>CREATE TABLE IF NOT EXISTS</code>) per service.</td>
+              </tr>
+              <tr>
+                <td><code>pand db migrate</code></td>
+                <td><code>--service &lt;svc&gt;</code></td>
+                <td>Applies pending migrations for each service using its isolated <code>__drizzle_migrations_&lt;svc&gt;</code> table.</td>
+              </tr>
+              <tr>
+                <td><code>pand db seed</code></td>
+                <td><code>--service &lt;svc&gt;</code></td>
+                <td>Runs <code>src/db/seed.ts</code> for one or all services.</td>
+              </tr>
+              <tr>
+                <td><code>pand db reset</code></td>
+                <td><code>--force</code></td>
+                <td>Drops service schemas and re-runs migrations + seeds (blocked in production).</td>
+              </tr>
+              <tr>
+                <td><code>pand db studio</code></td>
+                <td><code>--service &lt;svc&gt;</code></td>
+                <td>Launches Drizzle Studio for inspecting service tables.</td>
+              </tr>
+              <tr>
+                <td><code>pand sdk gen</code></td>
+                <td><code>--ts-only</code> <code>--ios</code> <code>--android</code></td>
+                <td>Extracts OpenAPI 3.1 specs from all services, merges them, and compiles TS, Swift, and Kotlin SDKs.</td>
+              </tr>
+              <tr>
+                <td><code>pand check</code></td>
+                <td><code>--json</code></td>
+                <td>Runs the 5-stage verification gate: TypeScript typecheck, Biome lint, OpenAPI spec validation, SDK drift check, and Vitest test suite.</td>
+              </tr>
+              <tr>
+                <td><code>pand dev</code></td>
+                <td><code>--no-docker</code></td>
+                <td>Starts Docker dev infra (Postgres, Redis, MinIO), runs migrations, watches services for SDK hot-reload, and boots the gateway.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 id="cli-ops">Box, Secrets, Deployment, Preview &amp; Observability Commands</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>Flags</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>pand secret set &lt;KEY=VAL&gt;</code></td>
+                <td><code>--env &lt;dev|prod&gt;</code></td>
+                <td>Encrypts secrets with AES-256-GCM in <code>.pand/secrets.&lt;env&gt;.enc</code> using master key in <code>~/.pand/master.key</code>. Also supports <code>list</code> and <code>rm</code>.</td>
+              </tr>
+              <tr>
+                <td><code>pand box init</code></td>
+                <td><code>--host &lt;ip&gt;</code> <code>--user &lt;u&gt;</code> <code>--domain &lt;d&gt;</code></td>
+                <td>Registers a single-box Ubuntu VPS in <code>~/.pand/boxes.json</code> and generates <code>infra/box</code> Docker Compose + Caddyfile. Also supports <code>list</code> and <code>status</code>.</td>
+              </tr>
+              <tr>
+                <td><code>pand deploy</code></td>
+                <td><code>--env prod</code> <code>--dry-run</code></td>
+                <td>Runs <code>pand check</code>, builds container images, syncs encrypted secrets, runs DB migrations, and performs zero-downtime rollout.</td>
+              </tr>
+              <tr>
+                <td><code>pand pause</code> / <code>resume</code></td>
+                <td><code>--box &lt;name&gt;</code></td>
+                <td>Stops or restarts application containers on the target Box while preserving persistent volumes.</td>
+              </tr>
+              <tr>
+                <td><code>pand backup create</code></td>
+                <td><code>--output &lt;dir&gt;</code></td>
+                <td>Runs <code>pg_dump</code> + Restic snapshot to S3/R2/local storage. Also supports <code>pand backup list</code> and <code>pand backup restore &lt;id&gt;</code>.</td>
+              </tr>
+              <tr>
+                <td><code>pand preview create &lt;branch&gt;</code></td>
+                <td><code>--ttl 24h</code></td>
+                <td>Creates an isolated PostgreSQL database clone and ephemeral preview deployment at <code>https://&lt;branch&gt;.preview.&lt;domain&gt;</code>. Also supports <code>list</code> and <code>destroy</code>.</td>
+              </tr>
+              <tr>
+                <td><code>pand logs</code> / <code>metrics</code> / <code>traces</code> / <code>usage</code></td>
+                <td><code>--service &lt;svc&gt;</code> <code>--since 1h</code></td>
+                <td>Queries Loki structured logs, Prometheus golden-signal metrics (RPS, P95, error rate), Tempo distributed traces, and container/disk usage.</td>
+              </tr>
+              <tr>
+                <td><code>pand upgrade</code></td>
+                <td><code>--target &lt;ver&gt;</code></td>
+                <td>Upgrades all <code>@pand/*</code> dependencies and runs AST/config codemods.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CORE PACKAGES API REFERENCE -->
+      <section id="pkg-config" class="doc-section doc-section-deferred">
+        <h2>📦 Core Packages API Reference</h2>
+
+        <div class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/config</code></h3>
+            <span class="badge">Configuration &amp; Port Hashing</span>
+          </div>
+          <p>Defines and validates <code>pand.config.ts</code> and computes deterministic FNV-1a service ports.</p>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { defineConfig, loadPandConfig, resolveServicePort, allocateServicePorts } from "@pand/config";
+
+export default defineConfig({
+  name: "acme-cloud",
+  version: "0.1.0",
+  services: {
+    core: { path: "services/core" },
+    billing: { path: "services/billing" },
+  },
+  apps: {
+    web: { path: "apps/web", framework: "nextjs" },
+    admin: { path: "apps/admin", framework: "nextjs" },
+    ios: { path: "ios", bundleId: "com.acme.cloud" },
+    android: { path: "android", packageName: "com.acme.cloud" },
+  },
+  gateway: {
+    port: 3000,
+    corsOrigins: ["http://localhost:3001", "http://localhost:3002"],
+    rateLimit: { windowMs: 60_000, max: 120 },
+  },
+});</code></pre>
+          </div>
+        </div>
+
+        <div id="pkg-service" class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/service</code></h3>
+            <span class="badge">Microservice Runtime &amp; Auto-CRUD</span>
+          </div>
+          <p>Wraps <code>@hono/zod-openapi</code> with correlation IDs, structured request logging, Prometheus metrics, HS256 gateway identity verification, and one-line Drizzle CRUD route generation.</p>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { createService, defineEntity, registerCrudRoutes } from "@pand/service";
+import { createServiceDb, standardColumns } from "@pand/db";
+import { z } from "zod";
+
+const { db, schema } = createServiceDb("billing");
+
+export const invoices = schema.table("invoices", {
+  ...standardColumns(),
+  customerId: schema.uuid("customer_id").notNull(),
+  amountCents: schema.integer("amount_cents").notNull(),
+  status: schema.varchar("status", { length: 32 }).notNull().default("draft"),
+});
+
+export const invoiceEntity = defineEntity({
+  name: "invoice",
+  plural: "invoices",
+  table: invoices,
+  createSchema: z.object({
+    customerId: z.string().uuid(),
+    amountCents: z.number().int().nonnegative(),
+    status: z.enum(["draft", "open", "paid", "void"]).default("draft"),
+  }),
+});
+
+export const service = createService({
+  name: "billing",
+  version: "0.1.0",
+  db,
+  entities: [invoiceEntity],
+});
+
+// Registers GET /, POST /, GET /:id, PATCH /:id, DELETE /:id with cursor pagination &amp; OpenAPI 3.1 metadata
+registerCrudRoutes(service.app, invoiceEntity, db);</code></pre>
+          </div>
+          <p>Every service automatically exposes <code>GET /health</code>, <code>GET /ready</code>, <code>GET /metrics</code>, <code>GET /openapi.json</code>, and <code>GET /_meta</code>.</p>
+        </div>
+
+        <div id="pkg-gateway" class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/gateway</code></h3>
+            <span class="badge">Edge Reverse Proxy &amp; Identity Signer</span>
+          </div>
+          <p>Routes <code>/api/v1/&lt;service&gt;/*</code> to downstream services, merges service OpenAPI specs at <code>GET /api/v1/openapi.json</code>, exposes entity metadata at <code>GET /api/v1/_meta</code>, and streams real-time Server-Sent Events at <code>GET /api/v1/events/stream</code>.</p>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { createGateway, signInternalIdentity, verifyInternalIdentity } from "@pand/gateway";
+
+const gateway = createGateway({
+  services: {
+    core: { url: "http://localhost:6300" },
+    billing: { url: "http://localhost:4700" },
+  },
+  internalSecret: process.env.PAND_INTERNAL_SECRET!,
+  corsOrigins: ["http://localhost:3001"],
+  rateLimit: { windowMs: 60_000, max: 200 },
+  resolveSession: async (req) => auth.verifyRequest(req),
+});</code></pre>
+          </div>
+        </div>
+
+        <div id="pkg-db" class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/db</code></h3>
+            <span class="badge">Per-Service Drizzle ORM &amp; Multi-Tenancy</span>
+          </div>
+          <p>Provides per-service PostgreSQL schema builders, UUIDv4 + timestamp standard columns, cursor pagination helpers, and organization-scoped query wrappers.</p>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { createServiceDb, standardColumns, scopeToOrg, decodeCursor, encodeCursor } from "@pand/db";
+
+const { db, pgSchema, close } = createServiceDb("core", process.env.DATABASE_URL);
+
+// Multi-tenant row scoping helper:
+const tenantFilter = scopeToOrg(projects.organizationId, ctx.var.identity?.orgId);
+const rows = await db.select().from(projects).where(tenantFilter);</code></pre>
+          </div>
+        </div>
+
+        <div id="pkg-auth" class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/auth</code></h3>
+            <span class="badge">Sessions, JWT, OAuth, API Keys &amp; RBAC</span>
+          </div>
+          <p>Full authentication and authorization suite for Web (HttpOnly cookies) and Native Mobile (Bearer access + refresh tokens), with built-in PBKDF2 password hashing, OAuth state/code exchange, API key management, and role/permission guards.</p>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { createPandAuth, createAuthClient } from "@pand/auth";
+
+// Server setup (mounts /register, /login, /logout, /refresh, /me, /api-keys)
+export const auth = createPandAuth({
+  secret: process.env.PAND_AUTH_SECRET!,
+  accessTokenTtlSeconds: 900,
+  refreshTokenTtlSeconds: 60 * 60 * 24 * 30,
+});
+
+// Universal client for Web &amp; React Native / Mobile
+const authClient = createAuthClient({ baseUrl: "http://localhost:3000/api/v1/auth" });
+const session = await authClient.login({ email: "dev@acme.io", password: "correct-horse-battery" });</code></pre>
+          </div>
+        </div>
+
+        <div id="pkg-sdk-gen" class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/sdk-gen</code></h3>
+            <span class="badge">OpenAPI 3.1 → TS, Swift &amp; Kotlin Compiler</span>
+          </div>
+          <p>Merges per-service OpenAPI 3.1 documents and generates zero-dependency, strongly-typed clients for TypeScript, Swift, and Kotlin.</p>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { mergeOpenApiSpecs, generateTypeScriptSdk, generateSwiftSdk, generateKotlinSdk } from "@pand/sdk-gen";
+
+const merged = mergeOpenApiSpecs([
+  { serviceName: "core", spec: coreOpenApi },
+  { serviceName: "billing", spec: billingOpenApi },
+]);
+
+const tsCode = generateTypeScriptSdk(merged);
+const swiftCode = generateSwiftSdk(merged);
+const kotlinCode = generateKotlinSdk(merged, "com.acme.pand.sdk");</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- UI & MOBILE -->
+      <section id="pkg-ui" class="doc-section doc-section-deferred">
+        <h2>🎨 UI Primitives, Admin Console &amp; Mobile SDKs</h2>
+
+        <div class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/ui</code> &amp; <code>@pand/admin-ui</code></h3>
+            <span class="badge">React Components &amp; Auto-Admin</span>
+          </div>
+          <p><code>@pand/ui</code> provides accessible, zero-configuration React components (<code>Button</code>, <code>Input</code>, <code>Select</code>, <code>Badge</code>, <code>Card</code>, <code>Dialog</code>, <code>DataTable</code>, <code>AutoForm</code>, <code>ToastProvider</code>). <code>@pand/admin-ui</code> introspects <code>GET /api/v1/_meta</code> to render a full CRUD Admin Console automatically.</p>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { DataTable, AutoForm, Button } from "@pand/ui";
+import { AdminDashboard } from "@pand/admin-ui";
+
+// Render an entire multi-service Admin Console with search, pagination, and Zod-backed create/edit modals:
+export default function AdminPage() {
+  return &lt;AdminDashboard gatewayUrl="http://localhost:3000" /&gt;;
+}</code></pre>
+          </div>
+        </div>
+
+        <div id="mobile-sdks" class="api-card">
+          <div class="api-card-header">
+            <h3>Native iOS (SwiftUI) &amp; Android (Jetpack Compose)</h3>
+            <span class="badge">Mobile SDKs &amp; Scaffolding</span>
+          </div>
+          <p>When you run <code>pand add entity task --service core --fields "title:string,done:boolean=false" --ios --android</code>, Pand generates:</p>
+          <ul>
+            <li><strong>iOS (Swift 5.9 / SwiftUI)</strong>: <code>ios/Sources/PandSDK/PandSDK.swift</code> with <code>URLSession</code> async/await methods, <code>KeychainTokenStore</code> with automatic <code>401</code> token refresh retry, and a complete SwiftUI List + Create Sheet View and <code>@MainActor ObservableObject</code> ViewModel.</li>
+            <li><strong>Android (Kotlin / Jetpack Compose)</strong>: <code>android/pand-sdk/src/main/kotlin/.../PandSDK.kt</code> with Kotlin Coroutines, <code>SharedPreferencesTokenStore</code>, automatic <code>401</code> refresh retry, and a Material 3 Compose screen + <code>StateFlow</code> ViewModel.</li>
+          </ul>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>// Swift (iOS) generated usage:
+let client = PandClient(
+    baseURL: URL(string: "https://api.acme.io")!,
+    tokenStore: KeychainTokenStore(service: "com.acme.app")
+)
+let tasks = try await client.coreListTasks(limit: 25)
+let created = try await client.coreCreateTask(input: CreateTaskInput(title: "Ship v1", done: false))</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLATFORM SERVICES -->
+      <section id="pkg-events" class="doc-section doc-section-deferred">
+        <h2>⚙️ Platform Services — Events, Storage, Push, Analytics &amp; Testing</h2>
+
+        <div class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/events</code></h3>
+            <span class="badge">BullMQ Event Bus &amp; Cron Jobs</span>
+          </div>
+          <p>Typed domain events and background jobs backed by Redis + BullMQ in production and an instant in-memory bus in tests.</p>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { defineEvent, createEventBus } from "@pand/events";
+import { z } from "zod";
+
+export const InvoicePaid = defineEvent("billing.invoice.paid", z.object({
+  invoiceId: z.string().uuid(),
+  amountCents: z.number().int(),
+}));
+
+const bus = createEventBus({ driver: "memory" }); // or { driver: "bullmq", redisUrl: process.env.REDIS_URL }
+bus.subscribe(InvoicePaid, async (payload) => {
+  console.log("Invoice paid:", payload.invoiceId);
+});
+await bus.publish(InvoicePaid, { invoiceId: "550e8400-e29b-41d4-a716-446655440000", amountCents: 4900 });</code></pre>
+          </div>
+        </div>
+
+        <div id="pkg-storage" class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/storage</code></h3>
+            <span class="badge">S3 / MinIO / Cloudflare R2 Object Storage</span>
+          </div>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { createStorageClient } from "@pand/storage";
+
+const storage = createStorageClient({
+  driver: "s3", // or "memory" for unit tests
+  endpoint: process.env.S3_ENDPOINT,
+  bucket: "acme-uploads",
+  region: "auto",
+  accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
+});
+
+await storage.putObject("avatars/u1.png", imageBuffer, "image/png");
+const uploadUrl = await storage.presignUpload("avatars/u2.png", { expiresInSeconds: 300 });</code></pre>
+          </div>
+        </div>
+
+        <div id="pkg-push" class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/push</code> &amp; <code id="pkg-analytics">@pand/analytics</code></h3>
+            <span class="badge">Mobile Push &amp; Product Telemetry</span>
+          </div>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { createPushClient } from "@pand/push";
+import { createAnalyticsClient } from "@pand/analytics";
+
+const push = createPushClient({ driver: "expo", accessToken: process.env.EXPO_ACCESS_TOKEN });
+await push.send({
+  to: "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]",
+  title: "Deployment Complete",
+  body: "acme-cloud v0.1.0 is live.",
+});
+
+const analytics = createAnalyticsClient({ endpoint: "/api/v1/analytics/events", batchSize: 10 });
+analytics.track("invoice_created", { amountCents: 9900 });
+await analytics.flush();</code></pre>
+          </div>
+        </div>
+
+        <div id="pkg-observability" class="api-card">
+          <div class="api-card-header">
+            <h3><code>@pand/logger</code>, <code>@pand/telemetry</code> &amp; <code id="pkg-testing">@pand/testing</code></h3>
+            <span class="badge">Observability &amp; Integration Testing</span>
+          </div>
+          <div class="code-wrapper">
+            <button class="copy-btn" type="button" data-copy>Copy</button>
+            <pre><code>import { createLogger } from "@pand/logger";
+import { createMetricsRegistry } from "@pand/telemetry";
+import { createTestContext, testService } from "@pand/testing";
+
+const logger = createLogger({ service: "billing" });
+logger.info({ invoiceId: "inv_123", apiKey: "secret" }, "Processed invoice"); // apiKey automatically "[REDACTED]"
+
+// In Vitest integration tests:
+const client = testService(service);
+const res = await client.request("/invoices", {
+  method: "POST",
+  body: { customerId: "550e8400-e29b-41d4-a716-446655440000", amountCents: 2500 },
+  identity: { sub: "user_1", roles: ["admin"], scopes: ["*"] },
+});</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- AGENT & MCP LAYER -->
+      <section id="pkg-mcp" class="doc-section doc-section-deferred">
+        <h2>🤖 Agent Layer &amp; Model Context Protocol (<code>@pand/mcp</code>)</h2>
+        <p>Pand includes a native MCP server (<code>@pand/mcp</code>) over stdio or in-process calls, giving AI coding agents 13 structured tools with built-in safety guardrails (blocking destructive database resets in production and enforcing secret redaction).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>MCP Tool Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>pand_project_info</code></td>
+                <td>Returns parsed <code>pand.config.ts</code>, allocated service ports, apps, and workspace topology.</td>
+              </tr>
+              <tr>
+                <td><code>pand_list_entities</code></td>
+                <td>Lists all entities across all services along with their fields and API endpoints.</td>
+              </tr>
+              <tr>
+                <td><code>pand_add_service</code></td>
+                <td>Scaffolds a new microservice and registers it in <code>pand.config.ts</code>.</td>
+              </tr>
+              <tr>
+                <td><code>pand_add_entity</code></td>
+                <td>Scaffolds a full-stack entity across Drizzle, Hono OpenAPI, Web, iOS, and Android.</td>
+              </tr>
+              <tr>
+                <td><code>pand_db_generate</code></td>
+                <td>Generates Drizzle SQL migrations for all or selected services.</td>
+              </tr>
+              <tr>
+                <td><code>pand_db_migrate</code></td>
+                <td>Applies pending PostgreSQL migrations safely.</td>
+              </tr>
+              <tr>
+                <td><code>pand_sdk_gen</code></td>
+                <td>Regenerates TypeScript, Swift, and Kotlin SDKs from live/static OpenAPI specs.</td>
+              </tr>
+              <tr>
+                <td><code>pand_check</code></td>
+                <td>Runs the 5-stage verification suite and returns structured pass/fail diagnostics.</td>
+              </tr>
+              <tr>
+                <td><code>pand_logs</code></td>
+                <td>Queries recent structured JSON logs filtered by service, level, or correlation ID.</td>
+              </tr>
+              <tr>
+                <td><code>pand_metrics</code></td>
+                <td>Returns RPS, error rate, and latency percentiles per service.</td>
+              </tr>
+              <tr>
+                <td><code>pand_traces</code></td>
+                <td>Fetches OpenTelemetry distributed traces across Gateway → Service → Postgres.</td>
+              </tr>
+              <tr>
+                <td><code>pand_deploy_status</code></td>
+                <td>Inspects active Box deployments, container health, and preview environments.</td>
+              </tr>
+              <tr>
+                <td><code>pand_secret_list</code></td>
+                <td>Lists configured secret keys (values are strictly redacted from agent context).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BOX INFRA -->
+      <section id="box-infra" class="doc-section doc-section-deferred">
+        <h2>🖥️ Single-Box Production Infrastructure &amp; Monitoring</h2>
+        <p><code>infra/box</code> packages an entire production cloud onto a single Ubuntu VPS with automatic HTTPS via Caddy, daily encrypted Restic backups, and a pre-wired Grafana observability stack:</p>
+        <ul>
+          <li><strong>Caddy Reverse Proxy</strong>: Automatic Let's Encrypt TLS certificates for your primary domain and wildcard <code>*.preview.&lt;domain&gt;</code> branches.</li>
+          <li><strong>Observability Stack</strong>: Prometheus (metrics scraping), Loki (log aggregation), Tempo (OTLP trace collector), Grafana (pre-provisioned golden-signal dashboards), and <code>ntfy</code> push notifications for high error rate or disk pressure alerts.</li>
+          <li><strong>Automated Backups</strong>: <code>pand backup create</code> snapshots PostgreSQL and MinIO volumes via Restic with configurable retention policies (7 daily, 4 weekly, 6 monthly).</li>
+        </ul>
+
+        <footer class="footer">
+          <div>
+            <strong>Pand Platform</strong> — Built with TypeScript, Hono, Drizzle, Zod, Next.js, SwiftUI &amp; Jetpack Compose.
+          </div>
+          <div>
+            <a href="https://github.com/MehdiNosrati/pand" style="color: var(--brand); text-decoration: none;">github.com/MehdiNosrati/pand</a>
+          </div>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (() => {
+      // Theme toggle following modern-web-guidance dark-mode-toggle rules:
+      // 1. State lives in <meta name="color-scheme" content="light dark | light | dark">
+      // 2. Divergence is checked ONLY at storage time against OS preference
+      const meta = document.querySelector('meta[name="color-scheme"]');
+      const toggleBtn = document.getElementById("theme-toggle");
+      const themeLabel = document.getElementById("theme-label");
+      const mql = window.matchMedia("(prefers-color-scheme: dark)");
+
+      function getSystemScheme() {
+        return mql.matches ? "dark" : "light";
+      }
+
+      function getEffectiveScheme() {
+        const content = meta.content.trim();
+        if (content === "light" || content === "dark") {
+          return content;
+        }
+        return getSystemScheme();
+      }
+
+      function updateToggleLabel() {
+        const effective = getEffectiveScheme();
+        const isPinned = meta.content === "light" || meta.content === "dark";
+        themeLabel.textContent =
+          (effective === "dark" ? "🌙 Dark" : "☀️ Light") + (isPinned ? "" : " (Auto)");
+      }
+
+      toggleBtn.addEventListener("click", () => {
+        const current = getEffectiveScheme();
+        const target = current === "dark" ? "light" : "dark";
+        const system = getSystemScheme();
+
+        if (target === system) {
+          meta.content = "light dark";
+          try {
+            localStorage.removeItem("color-scheme");
+          } catch {}
+        } else {
+          meta.content = target;
+          try {
+            localStorage.setItem("color-scheme", target);
+          } catch {}
+        }
+        updateToggleLabel();
+      });
+
+      mql.addEventListener("change", updateToggleLabel);
+      updateToggleLabel();
+
+      // Copy-to-clipboard buttons for code blocks
+      document.querySelectorAll("[data-copy]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const codeEl = btn.parentElement.querySelector("code");
+          if (!codeEl) return;
+          try {
+            await navigator.clipboard.writeText(codeEl.innerText);
+            const prev = btn.textContent;
+            btn.textContent = "Copied!";
+            setTimeout(() => {
+              btn.textContent = prev;
+            }, 1400);
+          } catch {}
+        });
+      });
+
+      // Instant client-side section filter
+      const searchInput = document.getElementById("doc-search");
+      const sections = Array.from(document.querySelectorAll(".doc-section"));
+      searchInput.addEventListener("input", () => {
+        const query = searchInput.value.trim().toLowerCase();
+        sections.forEach((section) => {
+          if (!query) {
+            section.style.display = "";
+            return;
+          }
+          const matches = section.innerText.toLowerCase().includes(query);
+          section.style.display = matches ? "" : "none";
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
