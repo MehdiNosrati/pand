@@ -103,6 +103,21 @@ Every CLI command supports `--json` for structured machine-readable output desig
 
 ---
 
+## 🤖 Agent Skills & MCP Integration
+
+Pand ships with 6 ready-to-use agent skills in [`skills/`](./skills) (also mirrored in [`.agents/skills/`](./.agents/skills) and scaffolded into every new project via `pand new`):
+
+| Skill | Path | Purpose |
+| :--- | :--- | :--- |
+| **`pand`** | [`skills/pand/SKILL.md`](./skills/pand/SKILL.md) | Master skill covering Pand CLI, Field DSL, `@pand/*` APIs, migrations, SDK generation, and Box deployment |
+| **`add-feature`** | [`skills/add-feature/SKILL.md`](./skills/add-feature/SKILL.md) | End-to-end runbook for scaffolding an entity across DB, Service, SDK, Web, iOS, and Android |
+| **`add-endpoint`** | [`skills/add-endpoint/SKILL.md`](./skills/add-endpoint/SKILL.md) | Runbook for adding custom non-CRUD OpenAPI routes with Zod validation and integration tests |
+| **`modify-schema`** | [`skills/modify-schema/SKILL.md`](./skills/modify-schema/SKILL.md) | Runbook for safely evolving Drizzle PostgreSQL schemas and generating forward migrations |
+| **`add-mobile-screen`** | [`skills/add-mobile-screen/SKILL.md`](./skills/add-mobile-screen/SKILL.md) | Runbook for building SwiftUI (iOS) and Jetpack Compose (Android) screens backed by `PandSDK` |
+| **`debug-production`** | [`skills/debug-production/SKILL.md`](./skills/debug-production/SKILL.md) | Runbook for triaging errors with Loki logs, Tempo traces (`trace_id`), Prometheus metrics, and read-only SQL |
+
+---
+
 ## 🛠️ Development
 
 ```bash

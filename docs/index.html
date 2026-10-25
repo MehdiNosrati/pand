@@ -1376,6 +1376,52 @@ const res = await client.request("/invoices", {
             </tbody>
           </table>
         </div>
+
+        <h3>Built-In Agent Skills (<code>skills/</code> &amp; <code>.agents/skills/</code>)</h3>
+        <p>Pand includes 6 agent skills in the repository root (<code>skills/</code> and <code>.agents/skills/</code>) and automatically scaffolds them into every project created with <code>pand new</code>:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Skill</th>
+                <th>Path</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>pand</code></td>
+                <td><a href="https://github.com/MehdiNosrati/pand/blob/main/skills/pand/SKILL.md" style="color: var(--brand);"><code>skills/pand/SKILL.md</code></a></td>
+                <td>Master platform skill covering the CLI, Field DSL, all <code>@pand/*</code> packages, multi-tenancy, and Box deployment.</td>
+              </tr>
+              <tr>
+                <td><code>add-feature</code></td>
+                <td><a href="https://github.com/MehdiNosrati/pand/blob/main/skills/add-feature/SKILL.md" style="color: var(--brand);"><code>skills/add-feature/SKILL.md</code></a></td>
+                <td>End-to-end runbook for scaffolding a full-stack feature across DB, API, SDK, Web, iOS, and Android.</td>
+              </tr>
+              <tr>
+                <td><code>add-endpoint</code></td>
+                <td><a href="https://github.com/MehdiNosrati/pand/blob/main/skills/add-endpoint/SKILL.md" style="color: var(--brand);"><code>skills/add-endpoint/SKILL.md</code></a></td>
+                <td>How to author custom non-CRUD OpenAPI routes with <code>@hono/zod-openapi</code> and integration tests.</td>
+              </tr>
+              <tr>
+                <td><code>modify-schema</code></td>
+                <td><a href="https://github.com/MehdiNosrati/pand/blob/main/skills/modify-schema/SKILL.md" style="color: var(--brand);"><code>skills/modify-schema/SKILL.md</code></a></td>
+                <td>How to safely alter Drizzle tables, generate SQL migrations, and verify zero contract drift.</td>
+              </tr>
+              <tr>
+                <td><code>add-mobile-screen</code></td>
+                <td><a href="https://github.com/MehdiNosrati/pand/blob/main/skills/add-mobile-screen/SKILL.md" style="color: var(--brand);"><code>skills/add-mobile-screen/SKILL.md</code></a></td>
+                <td>How to build or customize SwiftUI (iOS) and Jetpack Compose (Android) screens using <code>PandSDK</code>.</td>
+              </tr>
+              <tr>
+                <td><code>debug-production</code></td>
+                <td><a href="https://github.com/MehdiNosrati/pand/blob/main/skills/debug-production/SKILL.md" style="color: var(--brand);"><code>skills/debug-production/SKILL.md</code></a></td>
+                <td>How to triage production errors via Loki logs, Tempo traces, Prometheus RED metrics, and read-only SQL.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <!-- BOX INFRA -->
