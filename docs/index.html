@@ -1206,7 +1206,7 @@ const kotlinCode = generateKotlinSdk(merged, "com.acme.pand.sdk");</code></pre>
             <h3><code>@pands/ui</code> &amp; <code>@pands/admin-ui</code></h3>
             <span class="badge">React Components &amp; Auto-Admin</span>
           </div>
-          <p><code>@pands/ui</code> provides accessible, zero-configuration React components (<code>Button</code>, <code>Input</code>, <code>Select</code>, <code>Badge</code>, <code>Card</code>, <code>Dialog</code>, <code>DataTable</code>, <code>AutoForm</code>, <code>ToastProvider</code>). <code>@pands/admin-ui</code> introspects <code>GET /api/v1/_meta</code> to render a full CRUD Admin Console automatically.</p>
+          <p>Generated consumer web apps (<code>apps/web</code>) use <a href="https://mahdins.dev/methane/" target="_blank" rel="noopener noreferrer"><strong>Methane UI</strong></a> (<code>@methane-ui/tokens</code>, <code>@methane-ui/css</code>, <code>@methane-ui/ui</code>, <code>@methane-ui/react</code>). For the Admin Console, <code>@pands/ui</code> provides React primitives and <code>@pands/admin-ui</code> introspects <code>GET /api/v1/_meta</code> to render a full CRUD dashboard automatically.</p>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
             <pre><code>import { DataTable, AutoForm, Button } from "@pands/ui";

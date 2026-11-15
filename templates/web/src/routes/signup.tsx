@@ -1,4 +1,8 @@
-import { Button, Card, Input } from "@pands/ui";
+import "@methane-ui/ui/alert";
+import "@methane-ui/ui/button";
+import "@methane-ui/ui/card";
+import "@methane-ui/ui/input";
+import "@methane-ui/ui/password-input";
 import type React from "react";
 import { useState } from "react";
 import { authClient } from "./__root.js";
@@ -29,39 +33,46 @@ export default function SignupPage({ onNavigate }: { onNavigate?: (to: string) =
   };
 
   return (
-    <div className="mx-auto max-w-md pt-12">
-      <Card>
-        <h2 className="mb-4 text-xl font-bold text-slate-900">Create Account</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            id="name"
+    <div className="pand-auth-wrap">
+      <mth-card variant="outlined">
+        <h2 className="pand-section-title">Create Account</h2>
+        <form onSubmit={handleSubmit} className="mth-stack" data-gap="4">
+          <mth-input
             label="Name"
             required
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onmth-input={(e) => setName(e.detail.value)}
           />
-          <Input
-            id="email"
+          <mth-input
             label="Email"
             type="email"
             required
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onmth-input={(e) => setEmail(e.detail.value)}
           />
-          <Input
-            id="password"
+          <mth-password-input
             label="Password"
-            type="password"
+            toggleable
             required
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onmth-input={(e) => setPassword(e.detail.value)}
           />
-          {error ? <p className="text-xs text-red-600">{error}</p> : null}
-          <Button type="submit" disabled={loading} className="w-full">
+          {error ? (
+            <mth-alert variant="danger" open>
+              {error}
+            </mth-alert>
+          ) : null}
+          <mth-button
+            type="submit"
+            variant="solid"
+            loading={loading}
+            disabled={loading}
+            className="pand-full-width"
+          >
             {loading ? "Creating account..." : "Sign Up"}
-          </Button>
+          </mth-button>
         </form>
-      </Card>
+      </mth-card>
     </div>
   );
 }

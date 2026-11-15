@@ -1,16 +1,15 @@
+import "@methane-ui/ui/badge";
+import "@methane-ui/ui/button";
+import "@methane-ui/ui/card";
+import "@methane-ui/ui/checkbox";
+import "@methane-ui/ui/dialog";
+import "@methane-ui/ui/empty-state";
+import "@methane-ui/ui/input";
+import "@methane-ui/ui/number-input";
+import "@methane-ui/ui/search-input";
+import "@methane-ui/ui/select";
+import "@methane-ui/ui/toast";
 import { createPandClient } from "@{{project}}/sdk";
-import {
-  Badge,
-  Button,
-  Card,
-  Checkbox,
-  Dialog,
-  Input,
-  Select,
-  Table,
-  Textarea,
-  Toast,
-} from "@pands/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type React from "react";
 import { useState } from "react";
@@ -74,85 +73,102 @@ export default function {{pluralPascal}}Page() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="mth-stack" data-gap="6">
+      <div className="mth-flex" data-justify="between" data-align="center" data-wrap>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{{pluralTitle}}</h1>
-          <p className="text-sm text-slate-500">
-            Manage {{pluralTitle}} (/api/v1/{{service}}/{{pluralKebab}})
+          <h1 className="pand-title">{{pluralTitle}}</h1>
+          <p className="pand-subtitle">
+            Manage {{pluralTitle}} (<code>/api/v1/{{service}}/{{pluralKebab}}</code>)
           </p>
         </div>
-        <Button onClick={() => setModalOpen(true)}>Create {{entity}}</Button>
+        <mth-button variant="solid" onmth-press={() => setModalOpen(true)}>
+          Create {{entity}}
+        </mth-button>
       </div>
 
-      <Card className="p-4">
-        <Input
+      <mth-card variant="outlined">
+        <mth-search-input
           placeholder="Search {{pluralTitle}}..."
+          clearable
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onmth-input={(e) => setSearch(e.detail.value)}
+          onmth-clear={() => setSearch("")}
         />
-      </Card>
+      </mth-card>
 
       {isLoading ? (
-        <Card>Loading {{pluralTitle}}...</Card>
+        <mth-card variant="subtle">
+          <p className="pand-subtitle">Loading {{pluralTitle}}...</p>
+        </mth-card>
+      ) : items.length === 0 ? (
+        <mth-empty-state
+          variant="card"
+          heading="No {{pluralTitle}} yet"
+          description="Create your first {{entity}} to get started."
+        >
+          <mth-button slot="actions" variant="solid" onmth-press={() => setModalOpen(true)}>
+            Create {{entity}}
+          </mth-button>
+        </mth-empty-state>
       ) : (
-        <Table>
-          <thead className="border-b border-slate-200 bg-slate-50">
-            <tr>
+        <div className="pand-table-wrap">
+          <table className="pand-table">
+            <thead>
+              <tr>
 {{#each fields}}
-              <th className="px-4 py-3 font-semibold text-slate-700">{{label}}</th>
+                <th>{{label}}</th>
 {{/each}}
-              <th className="px-4 py-3 text-right font-semibold text-slate-700">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200">
-            {items.map((item) => (
-              <tr key={item.id} className="hover:bg-slate-50">
-{{#each fields}}
-                <td className="px-4 py-3">
-                  {typeof item.{{name}} === "boolean" ? (
-                    <Badge variant={item.{{name}} ? "success" : "default"}>
-                      {item.{{name}} ? "Yes" : "No"}
-                    </Badge>
-                  ) : (
-                    String(item.{{name}} ?? "—")
-                  )}
-                </td>
-{{/each}}
-                <td className="px-4 py-3 text-right">
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => deleteMutation.mutate(item.id)}
-                  >
-                    Delete
-                  </Button>
-                </td>
+                <th className="pand-text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.id}>
+{{#each fields}}
+                  <td>
+                    {typeof item.{{name}} === "boolean" ? (
+                      <mth-badge variant={item.{{name}} ? "success" : "neutral"} pill>
+                        {item.{{name}} ? "Yes" : "No"}
+                      </mth-badge>
+                    ) : (
+                      String(item.{{name}} ?? "—")
+                    )}
+                  </td>
+{{/each}}
+                  <td className="pand-text-right">
+                    <mth-button
+                      variant="danger"
+                      size="sm"
+                      onmth-press={() => deleteMutation.mutate(item.id)}
+                    >
+                      Delete
+                    </mth-button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
-      <Dialog
+      <mth-dialog
         open={modalOpen}
-        title="Create {{entity}}"
-        onClose={() => setModalOpen(false)}
+        modal
+        label="Create {{entity}}"
+        onmth-close={() => setModalOpen(false)}
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="mth-stack" data-gap="4">
 {{#each fields}}
 {{#if isBoolean}}
-          <Checkbox
-            id="{{name}}"
+          <mth-checkbox
             label="{{label}}"
             checked={Boolean(formState.{{name}})}
-            onChange={(e) =>
-              setFormState((s) => ({ ...s, {{name}}: e.target.checked }))
+            onmth-change={(e) =>
+              setFormState((s) => ({ ...s, {{name}}: e.detail.checked }))
             }
           />
 {{else if isEnum}}
-          <Select
-            id="{{name}}"
+          <mth-select
             label="{{label}}"
             value={String(formState.{{name}} ?? "")}
             options={[
@@ -160,53 +176,74 @@ export default function {{pluralPascal}}Page() {
               { label: "{{this}}", value: "{{this}}" },
 {{/each}}
             ]}
-            onChange={(e) =>
-              setFormState((s) => ({ ...s, {{name}}: e.target.value }))
+            onmth-change={(e) =>
+              setFormState((s) => ({ ...s, {{name}}: e.detail.value }))
             }
           />
 {{else if isInt}}
-          <Input
-            id="{{name}}"
+          <mth-number-input
             label="{{label}}"
-            type="number"
-            value={String(formState.{{name}} ?? "")}
-            onChange={(e) =>
-              setFormState((s) => ({ ...s, {{name}}: Number(e.target.value) }))
+            value={
+              formState.{{name}} === "" || formState.{{name}} === undefined
+                ? ""
+                : String(formState.{{name}})
+            }
+            onmth-input={(e) =>
+              setFormState((s) => ({
+                ...s,
+                {{name}}: Number.isNaN(e.detail.valueAsNumber) ? 0 : e.detail.valueAsNumber,
+              }))
             }
           />
 {{else if isFloat}}
-          <Input
-            id="{{name}}"
+          <mth-number-input
             label="{{label}}"
-            type="number"
-            value={String(formState.{{name}} ?? "")}
-            onChange={(e) =>
-              setFormState((s) => ({ ...s, {{name}}: Number(e.target.value) }))
+            step={0.01}
+            value={
+              formState.{{name}} === "" || formState.{{name}} === undefined
+                ? ""
+                : String(formState.{{name}})
+            }
+            onmth-input={(e) =>
+              setFormState((s) => ({
+                ...s,
+                {{name}}: Number.isNaN(e.detail.valueAsNumber) ? 0 : e.detail.valueAsNumber,
+              }))
             }
           />
 {{else}}
-          <Input
-            id="{{name}}"
+          <mth-input
             label="{{label}}"
             value={String(formState.{{name}} ?? "")}
-            onChange={(e) =>
-              setFormState((s) => ({ ...s, {{name}}: e.target.value }))
+            onmth-input={(e) =>
+              setFormState((s) => ({ ...s, {{name}}: e.detail.value }))
             }
           />
 {{/if}}
 {{/each}}
-          <div className="flex justify-end gap-2 pt-2">
-            <Button variant="secondary" onClick={() => setModalOpen(false)}>
+          <div className="mth-flex" data-justify="end" data-gap="2">
+            <mth-button variant="outline" type="button" onmth-press={() => setModalOpen(false)}>
               Cancel
-            </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
+            </mth-button>
+            <mth-button
+              type="submit"
+              variant="solid"
+              loading={createMutation.isPending}
+              disabled={createMutation.isPending}
+            >
               {createMutation.isPending ? "Saving..." : "Create"}
-            </Button>
+            </mth-button>
           </div>
         </form>
-      </Dialog>
+      </mth-dialog>
 
-      <Toast message={toast} variant="success" onDismiss={() => setToast(null)} />
+      <mth-toast
+        open={Boolean(toast)}
+        variant="success"
+        message={toast ?? ""}
+        closable
+        onmth-close={() => setToast(null)}
+      />
     </div>
   );
 }
