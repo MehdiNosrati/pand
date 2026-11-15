@@ -1,16 +1,20 @@
+import "@methane-ui/react";
+import "@methane-ui/ui/alert";
+import "@methane-ui/ui/badge";
+import "@methane-ui/ui/button";
+import "@methane-ui/ui/card";
+import "@methane-ui/ui/checkbox";
+import "@methane-ui/ui/dialog";
+import "@methane-ui/ui/empty-state";
+import "@methane-ui/ui/input";
+import "@methane-ui/ui/number-input";
+import "@methane-ui/ui/password-input";
+import "@methane-ui/ui/search-input";
+import "@methane-ui/ui/select";
+import "@methane-ui/ui/sidebar-nav";
+import "@methane-ui/ui/textarea";
+import "@methane-ui/ui/toast";
 import { createPandAuthClient } from "@pands/auth/client";
-import {
-  Badge,
-  Button,
-  Card,
-  Checkbox,
-  Dialog,
-  Input,
-  Select,
-  Table,
-  Textarea,
-  Toast,
-} from "@pands/ui";
 import type React from "react";
 import { useEffect, useState } from "react";
 
@@ -37,6 +41,65 @@ export interface DynamicEntityCrudProps {
   meta: AdminEntityMeta;
 }
 
+function renderAdminFieldControl(
+  f: AdminFieldMeta,
+  value: unknown,
+  onChange: (next: unknown) => void,
+) {
+  if (f.type === "boolean") {
+    return (
+      <mth-checkbox
+        key={f.name}
+        label={f.label}
+        checked={Boolean(value)}
+        onmth-change={(e) => onChange(e.detail.checked)}
+      />
+    );
+  }
+  if (f.type === "enum" && f.enumValues) {
+    return (
+      <mth-select
+        key={f.name}
+        label={f.label}
+        value={String(value ?? "")}
+        options={f.enumValues.map((v) => ({ label: v, value: v }))}
+        onmth-change={(e) => onChange(e.detail.value)}
+      />
+    );
+  }
+  if (f.type === "text") {
+    return (
+      <mth-textarea
+        key={f.name}
+        label={f.label}
+        value={String(value ?? "")}
+        onmth-input={(e) => onChange(e.detail.value)}
+      />
+    );
+  }
+  if (f.type === "int" || f.type === "float") {
+    return (
+      <mth-number-input
+        key={f.name}
+        label={f.label}
+        step={f.type === "float" ? 0.01 : undefined}
+        value={value === "" || value === undefined || value === null ? "" : String(value)}
+        onmth-input={(e) =>
+          onChange(Number.isNaN(e.detail.valueAsNumber) ? 0 : e.detail.valueAsNumber)
+        }
+      />
+    );
+  }
+  return (
+    <mth-input
+      key={f.name}
+      label={f.label}
+      value={String(value ?? "")}
+      onmth-input={(e) => onChange(e.detail.value)}
+    />
+  );
+}
+
 export function DynamicEntityCrud({ meta }: DynamicEntityCrudProps) {
   const [items, setItems] = useState<Array<Record<string, any>>>([]);
   const [search, setSearch] = useState("");
@@ -61,16 +124,14 @@ export function DynamicEntityCrud({ meta }: DynamicEntityCrudProps) {
     loadItems();
   }, [meta.basePath, search]);
 
+  const editableFields = meta.fields.filter(
+    (f) =>
+      f.name !== "id" && f.name !== "createdAt" && f.name !== "updatedAt" && !(f as any).readOnly,
+  );
+
   const openCreate = () => {
     const initial: Record<string, any> = {};
-    for (const f of meta.fields) {
-      if (
-        f.name === "id" ||
-        f.name === "createdAt" ||
-        f.name === "updatedAt" ||
-        (f as any).readOnly
-      )
-        continue;
+    for (const f of editableFields) {
       initial[f.name] = f.type === "boolean" ? false : (f.enumValues?.[0] ?? "");
     }
     setFormState(initial);
@@ -109,168 +170,149 @@ export function DynamicEntityCrud({ meta }: DynamicEntityCrudProps) {
     await loadItems();
   };
 
-  const editableFields = meta.fields.filter(
-    (f) =>
-      f.name !== "id" && f.name !== "createdAt" && f.name !== "updatedAt" && !(f as any).readOnly,
-  );
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="mth-stack" data-gap="6">
+      <div className="mth-flex" data-justify="between" data-align="center" data-wrap>
         <div>
-          <h2 className="text-xl font-bold text-slate-900">
-            {meta.pluralTitle}{" "}
-            <Badge variant="default" className="ml-2">
+          <h2 className="pand-admin-title">
+            {meta.pluralTitle}
+            <mth-badge variant="accent" pill>
               {meta.service}.{meta.table}
-            </Badge>
+            </mth-badge>
           </h2>
-          <p className="text-xs text-slate-500">{meta.basePath}</p>
+          <p className="pand-admin-subtitle">{meta.basePath}</p>
         </div>
-        <Button onClick={openCreate}>New {meta.entity}</Button>
+        <mth-button variant="solid" onmth-press={openCreate}>
+          New {meta.entity}
+        </mth-button>
       </div>
 
-      <Card className="p-4">
-        <Input
+      <mth-card variant="outlined">
+        <mth-search-input
           placeholder={`Search ${meta.pluralTitle} (${meta.searchableFields.join(", ") || "id"})...`}
+          clearable
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onmth-input={(e) => setSearch(e.detail.value)}
+          onmth-clear={() => setSearch("")}
         />
-      </Card>
+      </mth-card>
 
-      <Table>
-        <thead className="border-b border-slate-200 bg-slate-50">
-          <tr>
-            {meta.fields.map((f) => (
-              <th key={f.name} className="px-4 py-3 font-semibold text-slate-700">
-                {f.label}
-              </th>
-            ))}
-            <th className="px-4 py-3 text-right font-semibold text-slate-700">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-200">
-          {items.map((row) => (
-            <tr key={String(row[meta.primaryKey])} className="hover:bg-slate-50">
-              {meta.fields.map((f) => (
-                <td key={f.name} className="px-4 py-3">
-                  {typeof row[f.name] === "boolean" ? (
-                    <Badge variant={row[f.name] ? "success" : "default"}>
-                      {row[f.name] ? "true" : "false"}
-                    </Badge>
-                  ) : (
-                    String(row[f.name] ?? "—")
-                  )}
-                </td>
+      {items.length === 0 ? (
+        <mth-empty-state
+          variant="card"
+          heading={`No ${meta.pluralTitle} found`}
+          description={`Create your first ${meta.entity} or adjust your search filter.`}
+        >
+          <mth-button slot="actions" variant="solid" onmth-press={openCreate}>
+            New {meta.entity}
+          </mth-button>
+        </mth-empty-state>
+      ) : (
+        <div className="pand-admin-table-wrap">
+          <table className="pand-admin-table">
+            <thead>
+              <tr>
+                {meta.fields.map((f) => (
+                  <th key={f.name}>{f.label}</th>
+                ))}
+                <th className="pand-admin-text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((row) => (
+                <tr key={String(row[meta.primaryKey])}>
+                  {meta.fields.map((f) => (
+                    <td key={f.name}>
+                      {typeof row[f.name] === "boolean" ? (
+                        <mth-badge variant={row[f.name] ? "success" : "neutral"} pill>
+                          {row[f.name] ? "true" : "false"}
+                        </mth-badge>
+                      ) : (
+                        String(row[f.name] ?? "—")
+                      )}
+                    </td>
+                  ))}
+                  <td className="pand-admin-text-right">
+                    <div className="pand-admin-actions">
+                      <mth-button
+                        variant="outline"
+                        size="sm"
+                        onmth-press={() => {
+                          setEditItem(row);
+                          setFormState({ ...row });
+                        }}
+                      >
+                        Edit
+                      </mth-button>
+                      <mth-button
+                        variant="danger"
+                        size="sm"
+                        onmth-press={() => handleDelete(String(row[meta.primaryKey]))}
+                      >
+                        Delete
+                      </mth-button>
+                    </div>
+                  </td>
+                </tr>
               ))}
-              <td className="space-x-2 px-4 py-3 text-right">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => {
-                    setEditItem(row);
-                    setFormState({ ...row });
-                  }}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleDelete(String(row[meta.primaryKey]))}
-                >
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      <Dialog
+      <mth-dialog
         open={createOpen}
-        title={`Create ${meta.entity}`}
-        onClose={() => setCreateOpen(false)}
+        modal
+        label={`Create ${meta.entity}`}
+        onmth-close={() => setCreateOpen(false)}
       >
-        <form onSubmit={handleCreate} className="space-y-4">
+        <form onSubmit={handleCreate} className="mth-stack" data-gap="4">
           {editableFields.map((f) =>
-            f.type === "boolean" ? (
-              <Checkbox
-                key={f.name}
-                id={`create-${f.name}`}
-                label={f.label}
-                checked={Boolean(formState[f.name])}
-                onChange={(e) => setFormState((s) => ({ ...s, [f.name]: e.target.checked }))}
-              />
-            ) : f.type === "enum" && f.enumValues ? (
-              <Select
-                key={f.name}
-                id={`create-${f.name}`}
-                label={f.label}
-                value={String(formState[f.name] ?? "")}
-                options={f.enumValues.map((v) => ({ label: v, value: v }))}
-                onChange={(e) => setFormState((s) => ({ ...s, [f.name]: e.target.value }))}
-              />
-            ) : f.type === "text" ? (
-              <Textarea
-                key={f.name}
-                id={`create-${f.name}`}
-                label={f.label}
-                value={String(formState[f.name] ?? "")}
-                onChange={(e) => setFormState((s) => ({ ...s, [f.name]: e.target.value }))}
-              />
-            ) : (
-              <Input
-                key={f.name}
-                id={`create-${f.name}`}
-                label={f.label}
-                type={f.type === "int" || f.type === "float" ? "number" : "text"}
-                value={String(formState[f.name] ?? "")}
-                onChange={(e) =>
-                  setFormState((s) => ({
-                    ...s,
-                    [f.name]:
-                      f.type === "int" || f.type === "float"
-                        ? Number(e.target.value)
-                        : e.target.value,
-                  }))
-                }
-              />
+            renderAdminFieldControl(f, formState[f.name], (next) =>
+              setFormState((s) => ({ ...s, [f.name]: next })),
             ),
           )}
-          <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setCreateOpen(false)}>
+          <div className="mth-flex" data-justify="end" data-gap="2">
+            <mth-button variant="outline" type="button" onmth-press={() => setCreateOpen(false)}>
               Cancel
-            </Button>
-            <Button type="submit">Create</Button>
+            </mth-button>
+            <mth-button type="submit" variant="solid">
+              Create
+            </mth-button>
           </div>
         </form>
-      </Dialog>
+      </mth-dialog>
 
-      <Dialog
+      <mth-dialog
         open={Boolean(editItem)}
-        title={`Edit ${meta.entity}`}
-        onClose={() => setEditItem(null)}
+        modal
+        label={`Edit ${meta.entity}`}
+        onmth-close={() => setEditItem(null)}
       >
-        <form onSubmit={handleUpdate} className="space-y-4">
-          {editableFields.map((f) => (
-            <Input
-              key={f.name}
-              id={`edit-${f.name}`}
-              label={f.label}
-              value={String(formState[f.name] ?? "")}
-              onChange={(e) => setFormState((s) => ({ ...s, [f.name]: e.target.value }))}
-            />
-          ))}
-          <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setEditItem(null)}>
+        <form onSubmit={handleUpdate} className="mth-stack" data-gap="4">
+          {editableFields.map((f) =>
+            renderAdminFieldControl(f, formState[f.name], (next) =>
+              setFormState((s) => ({ ...s, [f.name]: next })),
+            ),
+          )}
+          <div className="mth-flex" data-justify="end" data-gap="2">
+            <mth-button variant="outline" type="button" onmth-press={() => setEditItem(null)}>
               Cancel
-            </Button>
-            <Button type="submit">Save Changes</Button>
+            </mth-button>
+            <mth-button type="submit" variant="solid">
+              Save Changes
+            </mth-button>
           </div>
         </form>
-      </Dialog>
+      </mth-dialog>
 
-      <Toast message={toast} variant="success" onDismiss={() => setToast(null)} />
+      <mth-toast
+        open={Boolean(toast)}
+        variant="success"
+        message={toast ?? ""}
+        closable
+        onmth-close={() => setToast(null)}
+      />
     </div>
   );
 }
@@ -309,6 +351,12 @@ export function AdminApp(props: AdminAppProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState<string | null>(null);
+  const [theme, setTheme] = useState<"light" | "dark">(() =>
+    typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-mth-theme") === "dark"
+      ? "dark"
+      : "light",
+  );
 
   useEffect(() => {
     if (initialUser !== undefined) return;
@@ -439,47 +487,61 @@ export function AdminApp(props: AdminAppProps) {
     }
   };
 
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute("data-mth-theme", next);
+    }
+    setTheme(next);
+  };
+
   if (user === null) {
     return (
-      <div className="mx-auto max-w-md pt-16">
-        <Card>
-          <h1 className="mb-4 text-xl font-bold text-slate-900">Pand Admin Sign In</h1>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <Input
-              id="admin-email"
+      <div className="pand-admin-auth">
+        <mth-card variant="outlined">
+          <h1 className="pand-admin-title">Pand Admin Sign In</h1>
+          <form onSubmit={handleLogin} className="mth-stack" data-gap="4">
+            <mth-input
               label="Admin Email"
               type="email"
+              required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onmth-input={(e) => setEmail(e.detail.value)}
             />
-            <Input
-              id="admin-password"
+            <mth-password-input
               label="Password"
-              type="password"
+              toggleable
+              required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onmth-input={(e) => setPassword(e.detail.value)}
             />
-            {authError ? <p className="text-xs text-red-600">{authError}</p> : null}
-            <Button type="submit" className="w-full">
+            {authError ? (
+              <mth-alert variant="danger" open>
+                {authError}
+              </mth-alert>
+            ) : null}
+            <mth-button type="submit" variant="solid" className="pand-admin-full">
               Sign In
-            </Button>
+            </mth-button>
           </form>
-        </Card>
+        </mth-card>
       </div>
     );
   }
 
   if (user && user.role !== "admin") {
     return (
-      <div className="mx-auto max-w-md pt-16">
-        <Card>
-          <h1 className="text-lg font-bold text-red-600">403 Admin role required</h1>
-          <p className="mt-2 text-sm text-slate-600">
+      <div className="pand-admin-auth">
+        <mth-card variant="outlined">
+          <mth-alert variant="danger" open>
+            403 Admin role required
+          </mth-alert>
+          <p className="pand-admin-muted">
             Signed in as {user.email} (role: {user.role ?? "user"}). Add your email to{" "}
             <code>auth.adminEmails</code> in <code>pand.config.ts</code> or{" "}
             <code>PAND_ADMIN_EMAILS</code>.
           </p>
-        </Card>
+        </mth-card>
       </div>
     );
   }
@@ -488,186 +550,184 @@ export function AdminApp(props: AdminAppProps) {
     entities.find((e) => `${e.service}.${e.entity}` === selectedEntityKey) ?? entities[0];
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-900">
-      <aside className="flex w-64 flex-col border-r border-slate-200 bg-white">
-        <div className="border-b border-slate-200 px-6 py-4">
-          <span className="text-lg font-bold text-slate-900">Pand Admin</span>
+    <div className="mth-app-shell">
+      <header className="mth-app-shell-header">
+        <div className="pand-admin-header-inner">
+          <span className="pand-admin-brand">Pand Admin</span>
+          <mth-button variant="ghost" size="sm" onmth-press={toggleTheme}>
+            {theme === "dark" ? "Light Mode" : "Dark Mode"}
+          </mth-button>
         </div>
-        <div className="flex-1 space-y-6 p-4">
-          <div>
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Entities
-            </div>
-            <div className="space-y-1">
-              {entities.map((e) => {
-                const key = `${e.service}.${e.entity}`;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => {
-                      setActiveTab("entities");
-                      setSelectedEntityKey(key);
-                    }}
-                    className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium cursor-pointer ${
-                      activeTab === "entities" && selectedEntityKey === key
-                        ? "bg-blue-50 text-blue-700"
-                        : "text-slate-600 hover:bg-slate-100"
-                    }`}
-                  >
-                    {e.pluralTitle} <span className="text-xs text-slate-400">({e.service})</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+      </header>
 
-          <div>
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              System
-            </div>
-            <div className="space-y-1">
-              <button
-                type="button"
-                onClick={() => setActiveTab("users")}
-                className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium cursor-pointer ${
-                  activeTab === "users"
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                Users & Auth
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("observability")}
-                className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium cursor-pointer ${
-                  activeTab === "observability"
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                Observability & Docs
-              </button>
-            </div>
-          </div>
+      <aside className="mth-app-shell-sidebar pand-admin-sidebar">
+        <div className="pand-admin-sidebar-section">
+          <div className="pand-admin-sidebar-heading">Entities</div>
+          <mth-sidebar-nav
+            label="Entities"
+            activeValue={activeTab === "entities" ? (selectedEntityKey ?? undefined) : undefined}
+            items={entities.map((e) => ({
+              value: `${e.service}.${e.entity}`,
+              label: e.pluralTitle,
+              badge: e.service,
+            }))}
+            onmth-select={(e) => {
+              setActiveTab("entities");
+              setSelectedEntityKey(e.detail.value);
+            }}
+          />
+        </div>
+
+        <div className="pand-admin-sidebar-section">
+          <div className="pand-admin-sidebar-heading">System</div>
+          <mth-sidebar-nav
+            label="System"
+            activeValue={activeTab !== "entities" ? activeTab : undefined}
+            items={[
+              { value: "users", label: "Users & Auth" },
+              { value: "observability", label: "Observability & Docs" },
+            ]}
+            onmth-select={(e) => setActiveTab(e.detail.value)}
+          />
         </div>
       </aside>
 
-      <main className="flex-1 p-8">
-        {activeTab === "entities" && selectedEntity ? (
-          <DynamicEntityCrud meta={selectedEntity} />
-        ) : activeTab === "users" ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">Users & Auth</h2>
-                <p className="text-xs text-slate-500">
-                  Better Auth User Management ({usersList.length} users registered)
-                </p>
+      <main className="mth-app-shell-main">
+        <div className="pand-admin-main">
+          {activeTab === "entities" && selectedEntity ? (
+            <DynamicEntityCrud meta={selectedEntity} />
+          ) : activeTab === "users" ? (
+            <div className="mth-stack" data-gap="6">
+              <div className="mth-flex" data-justify="between" data-align="center" data-wrap>
+                <div>
+                  <h2 className="pand-admin-title">Users & Auth</h2>
+                  <p className="pand-admin-muted">
+                    Better Auth User Management ({usersList.length} users registered)
+                  </p>
+                </div>
+                <mth-button variant="outline" size="sm" onmth-press={loadUsers}>
+                  Refresh Users
+                </mth-button>
               </div>
-              <Button variant="secondary" size="sm" onClick={loadUsers}>
-                Refresh Users
-              </Button>
-            </div>
 
-            {usersList.length === 0 ? (
-              <Card className="p-6 text-center text-slate-500">
-                No users loaded or failed to fetch users list.
-              </Card>
-            ) : (
-              <Table>
-                <thead className="border-b border-slate-200 bg-slate-50">
-                  <tr>
-                    <th className="px-4 py-3 font-semibold text-slate-700">User</th>
-                    <th className="px-4 py-3 font-semibold text-slate-700">Role</th>
-                    <th className="px-4 py-3 font-semibold text-slate-700">Status</th>
-                    <th className="px-4 py-3 font-semibold text-slate-700">Created</th>
-                    <th className="px-4 py-3 text-right font-semibold text-slate-700">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-200">
-                  {usersList.map((u) => (
-                    <tr key={u.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-3">
-                        <div className="font-medium text-slate-900">{u.name || "No name"}</div>
-                        <div className="text-xs text-slate-500">{u.email}</div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <Badge variant={u.role === "admin" ? "warning" : "default"}>
-                          {u.role ?? "user"}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3">
-                        <Badge variant={u.banned ? "danger" : "success"}>
-                          {u.banned ? "Banned" : "Active"}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3 text-xs text-slate-500">
-                        {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "—"}
-                      </td>
-                      <td className="space-x-2 px-4 py-3 text-right">
-                        <Button variant="secondary" size="sm" onClick={() => handleToggleRole(u)}>
-                          {u.role === "admin" ? "Demote to User" : "Make Admin"}
-                        </Button>
-                        <Button
-                          variant={u.banned ? "secondary" : "danger"}
-                          size="sm"
-                          onClick={() => handleToggleBan(u)}
-                        >
-                          {u.banned ? "Unban" : "Ban"}
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            )}
+              {usersList.length === 0 ? (
+                <mth-empty-state
+                  variant="card"
+                  heading="No users loaded"
+                  description="No users loaded or failed to fetch users list."
+                />
+              ) : (
+                <div className="pand-admin-table-wrap">
+                  <table className="pand-admin-table">
+                    <thead>
+                      <tr>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th className="pand-admin-text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {usersList.map((u) => (
+                        <tr key={u.id}>
+                          <td>
+                            <div className="pand-admin-user-name">{u.name || "No name"}</div>
+                            <div className="pand-admin-user-email">{u.email}</div>
+                          </td>
+                          <td>
+                            <mth-badge variant={u.role === "admin" ? "warning" : "neutral"} pill>
+                              {u.role ?? "user"}
+                            </mth-badge>
+                          </td>
+                          <td>
+                            <mth-badge variant={u.banned ? "danger" : "success"} pill>
+                              {u.banned ? "Banned" : "Active"}
+                            </mth-badge>
+                          </td>
+                          <td className="pand-admin-user-email">
+                            {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "—"}
+                          </td>
+                          <td className="pand-admin-text-right">
+                            <div className="pand-admin-actions">
+                              <mth-button
+                                variant="outline"
+                                size="sm"
+                                onmth-press={() => handleToggleRole(u)}
+                              >
+                                {u.role === "admin" ? "Demote to User" : "Make Admin"}
+                              </mth-button>
+                              <mth-button
+                                variant={u.banned ? "outline" : "danger"}
+                                size="sm"
+                                onmth-press={() => handleToggleBan(u)}
+                              >
+                                {u.banned ? "Unban" : "Ban"}
+                              </mth-button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
 
-            <Toast message={adminToast} variant="success" onDismiss={() => setAdminToast(null)} />
-          </div>
-        ) : activeTab === "observability" ? (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-slate-900">Observability & Docs</h2>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Card>
-                <h3 className="font-semibold text-slate-900">OpenAPI Reference</h3>
-                <a
-                  href={links.docsUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-2 inline-block text-sm text-blue-600 hover:underline"
-                >
-                  Open Scalar Docs →
-                </a>
-              </Card>
-              <Card>
-                <h3 className="font-semibold text-slate-900">Grafana (Logs, Metrics, Traces)</h3>
-                <a
-                  href={links.grafanaUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-2 inline-block text-sm text-blue-600 hover:underline"
-                >
-                  Open Grafana →
-                </a>
-              </Card>
-              <Card>
-                <h3 className="font-semibold text-slate-900">PostHog EU Product Analytics</h3>
-                <a
-                  href={links.posthogUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-2 inline-block text-sm text-blue-600 hover:underline"
-                >
-                  Open PostHog →
-                </a>
-              </Card>
+              <mth-toast
+                open={Boolean(adminToast)}
+                variant="success"
+                message={adminToast ?? ""}
+                closable
+                onmth-close={() => setAdminToast(null)}
+              />
             </div>
-          </div>
-        ) : (
-          <Card>No entities registered yet. Run pand add entity to add one.</Card>
-        )}
+          ) : activeTab === "observability" ? (
+            <div className="mth-stack" data-gap="4">
+              <h2 className="pand-admin-title">Observability & Docs</h2>
+              <div className="mth-grid" data-cols="3" data-gap="4">
+                <mth-card variant="outlined">
+                  <h3 className="pand-admin-card-title">OpenAPI Reference</h3>
+                  <a
+                    href={links.docsUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="pand-admin-link"
+                  >
+                    Open Scalar Docs →
+                  </a>
+                </mth-card>
+                <mth-card variant="outlined">
+                  <h3 className="pand-admin-card-title">Grafana (Logs, Metrics, Traces)</h3>
+                  <a
+                    href={links.grafanaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="pand-admin-link"
+                  >
+                    Open Grafana →
+                  </a>
+                </mth-card>
+                <mth-card variant="outlined">
+                  <h3 className="pand-admin-card-title">PostHog EU Product Analytics</h3>
+                  <a
+                    href={links.posthogUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="pand-admin-link"
+                  >
+                    Open PostHog →
+                  </a>
+                </mth-card>
+              </div>
+            </div>
+          ) : (
+            <mth-empty-state
+              variant="card"
+              heading="No entities registered yet"
+              description="Run pand add entity to add one."
+            />
+          )}
+        </div>
       </main>
     </div>
   );

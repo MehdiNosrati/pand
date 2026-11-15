@@ -597,7 +597,7 @@
       <div class="nav-group">
         <div class="nav-group-title">UI &amp; Mobile SDKs</div>
         <ul class="nav-list">
-          <li><a class="nav-link" href="#pkg-ui">@pands/ui &amp; @pands/admin-ui</a></li>
+          <li><a class="nav-link" href="#pkg-ui">Methane UI &amp; @pands/admin-ui</a></li>
           <li><a class="nav-link" href="#mobile-sdks">iOS (SwiftUI) &amp; Android (Compose)</a></li>
         </ul>
       </div>
@@ -1203,18 +1203,20 @@ const kotlinCode = generateKotlinSdk(merged, "com.acme.pand.sdk");</code></pre>
 
         <div class="api-card">
           <div class="api-card-header">
-            <h3><code>@pands/ui</code> &amp; <code>@pands/admin-ui</code></h3>
-            <span class="badge">React Components &amp; Auto-Admin</span>
+            <h3>Methane UI (<code>@methane-ui/*</code>) &amp; <code>@pands/admin-ui</code></h3>
+            <span class="badge">Web Components &amp; Auto-Admin</span>
           </div>
-          <p>Generated consumer web apps (<code>apps/web</code>) use <a href="https://mahdins.dev/methane/" target="_blank" rel="noopener noreferrer"><strong>Methane UI</strong></a> (<code>@methane-ui/tokens</code>, <code>@methane-ui/css</code>, <code>@methane-ui/ui</code>, <code>@methane-ui/react</code>). For the Admin Console, <code>@pands/ui</code> provides React primitives and <code>@pands/admin-ui</code> introspects <code>GET /api/v1/_meta</code> to render a full CRUD dashboard automatically.</p>
+          <p>Both generated consumer web apps (<code>apps/web</code>) and the Admin Console (<code>apps/admin</code>) are powered by <a href="https://mahdins.dev/methane/" target="_blank" rel="noopener noreferrer"><strong>Methane UI</strong></a> (<code>@methane-ui/tokens</code>, <code>@methane-ui/css</code>, <code>@methane-ui/ui</code>, <code>@methane-ui/react</code>). <code>@pands/admin-ui</code> introspects <code>GET /api/v1/_meta</code> to render a full CRUD dashboard automatically.</p>
           <div class="code-wrapper">
             <button class="copy-btn" type="button" data-copy>Copy</button>
-            <pre><code>import { DataTable, AutoForm, Button } from "@pands/ui";
-import { AdminDashboard } from "@pands/admin-ui";
+            <pre><code>import { AdminApp } from "@pands/admin-ui";
+import "@methane-ui/tokens/tokens.css";
+import "@methane-ui/css/index.css";
+import "@pands/admin-ui/styles.css";
+import "@methane-ui/react";
 
-// Render an entire multi-service Admin Console with search, pagination, and Zod-backed create/edit modals:
 export default function AdminPage() {
-  return &lt;AdminDashboard gatewayUrl="http://localhost:3000" /&gt;;
+  return &lt;AdminApp /&gt;;
 }</code></pre>
           </div>
         </div>

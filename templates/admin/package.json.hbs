@@ -10,17 +10,19 @@
     "test": "node -e \"console.log('admin ok')\""
   },
   "dependencies": {
+    "@methane-ui/core": "^0.1.0",
+    "@methane-ui/css": "^0.1.0",
+    "@methane-ui/react": "^0.1.0",
+    "@methane-ui/tokens": "^0.1.0",
+    "@methane-ui/ui": "^0.1.0",
     "@pands/admin-ui": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/admin-ui{{else}}^{{pandVersion}}{{/if}}",
-    "@pands/ui": "{{#if isLocalMonorepo}}link:{{platformRoot}}/packages/ui{{else}}^{{pandVersion}}{{/if}}",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
-    "tailwindcss": "^4.0.0",
     "typescript": "^5.7.3",
     "vite": "^6.2.0"
   }

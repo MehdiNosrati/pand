@@ -1,0 +1,155 @@
+.pand-admin-auth {
+  max-width: 26rem;
+  margin: var(--mth-space-16) auto 0;
+}
+
+.pand-admin-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--mth-space-4);
+}
+
+.pand-admin-brand {
+  font-size: var(--mth-font-size-md);
+  font-weight: var(--mth-font-weight-bold);
+  color: var(--mth-color-fg);
+}
+
+.pand-admin-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mth-space-5);
+}
+
+.pand-admin-sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mth-space-2);
+}
+
+.pand-admin-sidebar-heading {
+  font-size: var(--mth-font-size-xs);
+  font-weight: var(--mth-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mth-color-fg-subtle);
+  padding: 0 var(--mth-space-2);
+}
+
+.pand-admin-main {
+  max-width: 76rem;
+  margin: 0 auto;
+}
+
+.pand-admin-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--mth-space-2);
+  font-size: var(--mth-font-size-xl);
+  font-weight: var(--mth-font-weight-bold);
+  color: var(--mth-color-fg);
+}
+
+.pand-admin-subtitle {
+  margin: var(--mth-space-1) 0 0;
+  font-family: var(--mth-font-mono);
+  font-size: var(--mth-font-size-xs);
+  color: var(--mth-color-fg-muted);
+}
+
+.pand-admin-muted {
+  margin: var(--mth-space-2) 0 0;
+  font-size: var(--mth-font-size-sm);
+  color: var(--mth-color-fg-muted);
+}
+
+.pand-admin-muted code {
+  font-family: var(--mth-font-mono);
+  font-size: var(--mth-font-size-xs);
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--mth-radius-sm);
+  background: var(--mth-color-bg-muted);
+  color: var(--mth-color-fg);
+}
+
+.pand-admin-table-wrap {
+  overflow-x: auto;
+  background: var(--mth-color-surface);
+  border: 1px solid var(--mth-color-border);
+  border-radius: var(--mth-radius-lg);
+}
+
+.pand-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--mth-font-size-sm);
+}
+
+.pand-admin-table th {
+  padding: var(--mth-space-3) var(--mth-space-4);
+  font-weight: var(--mth-font-weight-semibold);
+  color: var(--mth-color-fg-muted);
+  background: var(--mth-color-bg-subtle);
+  border-bottom: 1px solid var(--mth-color-border);
+}
+
+.pand-admin-table td {
+  padding: var(--mth-space-3) var(--mth-space-4);
+  color: var(--mth-color-fg);
+  border-bottom: 1px solid var(--mth-color-border);
+  vertical-align: middle;
+}
+
+.pand-admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.pand-admin-table tbody tr:hover {
+  background: var(--mth-color-bg-subtle);
+}
+
+.pand-admin-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--mth-space-2);
+}
+
+.pand-admin-text-right {
+  text-align: right;
+}
+
+.pand-admin-full {
+  width: 100%;
+}
+
+.pand-admin-user-name {
+  font-weight: var(--mth-font-weight-medium);
+  color: var(--mth-color-fg);
+}
+
+.pand-admin-user-email {
+  font-size: var(--mth-font-size-xs);
+  color: var(--mth-color-fg-muted);
+}
+
+.pand-admin-card-title {
+  margin: 0 0 var(--mth-space-2);
+  font-size: var(--mth-font-size-md);
+  font-weight: var(--mth-font-weight-semibold);
+  color: var(--mth-color-fg);
+}
+
+.pand-admin-link {
+  display: inline-block;
+  font-size: var(--mth-font-size-sm);
+  color: var(--mth-color-accent);
+  text-decoration: none;
+}
+
+.pand-admin-link:hover {
+  text-decoration: underline;
+}

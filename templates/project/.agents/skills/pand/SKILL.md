@@ -13,7 +13,7 @@ Use this skill whenever creating a new Pand project, adding microservices or ent
 2. **Always Pass `--json` in Agent Workflows**: Every `pand` CLI command supports `--json` for deterministic machine-readable output.
 3. **Never Edit Generated Artifacts**:
    - Do not hand-edit `packages/sdk/src/**`, `ios/Sources/PandSDK/PandSDK.swift`, `android/pand-sdk/**`, `**/openapi.json`, or `**/drizzle/meta/**`.
-   - Preserve marker comments (`// pand:schemas`, `// pand:routes`, `// pand:entities`) in service entrypoints.
+   - Preserve marker comments (`// pand:schemas`, `// pand:routes`, `// pand:entities`, `// pand:web-nav`, `// pand:ios-tabs`, `// pand:android-tabs`).
 4. **Keep Contracts & SDKs in Sync**: Whenever a database table or OpenAPI route changes, run:
    ```bash
    pand db generate && pand db migrate && pand sdk gen
@@ -74,13 +74,19 @@ pand db seed --json
 3. Read the verified gateway identity from `c.get("identity")` (`{ sub, orgId, roles, scopes }`).
 4. Run `pand sdk gen && pand check`.
 
-### 6. Event Bus, Storage, Push & Analytics
+### 6. Web & Admin UI (`@methane-ui/*` & `@pands/admin-ui`)
+- **Do not install or use Tailwind CSS or `@pands/ui`** — `apps/web`, `apps/admin`, and `@pands/admin-ui` use **Methane UI** (`@methane-ui/tokens`, `@methane-ui/css`, `@methane-ui/ui`, `@methane-ui/react`).
+- Import `@methane-ui/tokens/tokens.css`, `@methane-ui/css/index.css`, and `@methane-ui/react` at app root, and side-effect import needed elements (`@methane-ui/ui/button`, `@methane-ui/ui/input`, `@methane-ui/ui/dialog`, `@methane-ui/ui/card`, `@methane-ui/ui/toast`, etc.) in components.
+- Use `<mth-*>` custom elements with React 19 `onmth-*` events (`onmth-press`, `onmth-input` -> `e.detail.value` / `valueAsNumber`, `onmth-change` -> `e.detail.checked` / `e.detail.value`, `onmth-select`, `onmth-close`, `onmth-clear`).
+- Use Methane layout classes (`.mth-app-shell`, `.mth-stack`, `.mth-grid`, `.mth-flex` with `data-gap`, `data-cols`, `data-justify`, `data-align`) and `--mth-*` CSS custom properties (`--mth-color-*`, `--mth-space-*`, `--mth-radius-*`).
+
+### 7. Event Bus, Storage, Push & Analytics
 - **Events (`@pands/events`)**: Define typed events with `defineEvent("domain.action", z.object({...}))` and publish/subscribe via `createEventBus()`.
 - **Object Storage (`@pands/storage`)**: Use `createStorageClient()` for `putObject`, `getObject`, `presignUpload`, and `presignDownload` (use `driver: "memory"` in tests).
 - **Push Notifications (`@pands/push`)**: Use `createPushClient()` for Expo, APNs, and FCM delivery.
 - **Analytics (`@pands/analytics`)**: Use `createAnalyticsClient()` for batched event tracking.
 
-### 7. Deployment, Previews, Backups & Observability
+### 8. Deployment, Previews, Backups & Observability
 ```bash
 # Manage AES-256-GCM encrypted secrets
 pand secret set DATABASE_URL="postgres://..." --env prod

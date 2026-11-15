@@ -103,8 +103,7 @@ Explore real-world applications built with the Pand platform:
 | `@pands/db` | `createServiceDb`, `standardColumns`, `scopeToOrg` multi-tenant helper, cursor pagination |
 | `@pands/auth` | `createPandAuth` server & client, session & bearer tokens, OAuth, RBAC, password hashing |
 | `@pands/sdk-gen` | OpenAPI 3.1 merger and TypeScript, Swift (`PandSDK.swift`), & Kotlin (`PandSDK.kt`) generators |
-| `@pands/ui` | Accessible React primitives (`Button`, `Input`, `Select`, `Badge`, `Card`, `Dialog`, `DataTable`, `AutoForm`, `Toast`) |
-| `@pands/admin-ui` | Auto-generated CRUD Admin Console powered by `/api/v1/_meta` |
+| `@pands/admin-ui` | Auto-generated CRUD Admin Console powered by `/api/v1/_meta` and Methane UI (`@methane-ui/*`) |
 | `@pands/events` | BullMQ + Redis event bus & background jobs (`createEventBus`, `defineEvent`, `defineCron`) + in-memory test bus |
 | `@pands/storage` | S3 / MinIO / R2 storage client (`putObject`, `getObject`, `presignUpload`, `presignDownload`) + memory adapter |
 | `@pands/push` | Expo, APNs, and FCM push dispatcher (`createPushClient`) + memory adapter |

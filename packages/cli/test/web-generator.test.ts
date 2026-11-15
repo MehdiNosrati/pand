@@ -65,6 +65,28 @@ describe("pand web template & --web entity page generator (Methane UI)", () => {
       const navTs = fs.readFileSync(path.join(webDir, "src", "nav.ts"), "utf8");
       expect(navTs).toContain('{ label: "Tasks", to: "/tasks" }');
       expect(navTs).not.toContain("@pands/ui");
+
+      const adminDir = path.join(created.projectDir, "apps", "admin");
+      const adminPkg = JSON.parse(fs.readFileSync(path.join(adminDir, "package.json"), "utf8"));
+      expect(adminPkg.dependencies["@methane-ui/ui"]).toBe("^0.1.0");
+      expect(adminPkg.dependencies["@pands/admin-ui"]).toBeDefined();
+      expect(adminPkg.dependencies["@pands/ui"]).toBeUndefined();
+      expect(adminPkg.devDependencies.tailwindcss).toBeUndefined();
+      expect(adminPkg.devDependencies["@tailwindcss/vite"]).toBeUndefined();
+
+      const adminVite = fs.readFileSync(path.join(adminDir, "vite.config.ts"), "utf8");
+      expect(adminVite).not.toContain("@tailwindcss/vite");
+
+      const adminMain = fs.readFileSync(path.join(adminDir, "src", "main.tsx"), "utf8");
+      expect(adminMain).toContain("@methane-ui/tokens/tokens.css");
+      expect(adminMain).toContain("@pands/admin-ui/styles.css");
+      expect(adminMain).not.toContain("@pands/ui");
+
+      const pandSkill = fs.readFileSync(
+        path.join(created.projectDir, ".agents", "skills", "pand", "SKILL.md"),
+        "utf8",
+      );
+      expect(pandSkill).toContain("@methane-ui/");
     } finally {
       fs.rmSync(tmpBase, { recursive: true, force: true });
     }
